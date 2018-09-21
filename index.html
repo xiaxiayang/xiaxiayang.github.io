@@ -359,20 +359,102 @@
         
           
             <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a><strong>前言</strong></h3><p>在开发中，总是能碰到那种看起来很简单，但是想想又不是一两句代码就好实现的 UI 样式效果。比如前几天在调整 UI 的时候，就遇到过几个下图这样的：</p>
-<p><img src="https://img-blog.csdn.net/20180916201849574?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNzAzODc3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
-<p><img src="https://img-blog.csdn.net/20180916201859696?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNzAzODc3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
-<p><img src="https://img-blog.csdn.net/20180916201930207?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNzAzODc3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"> </p>
+<p><img src="https://i.loli.net/2018/09/21/5ba50179514b4.png" alt="1]1MPB97(OC8Z@E1WS{T`G7.png"><br><img src="https://i.loli.net/2018/09/21/5ba5017967648.png" alt="8G(NRRT0N6IPC(_EUQ09SOG.png"><br><img src="https://i.loli.net/2018/09/21/5ba50250066ce.png" alt=""></p>
 <p>这几张图里面的输入框的背景图乍一看没有什么，但是在认识 <code>&lt;layer-list&gt;</code> 之前你会怎么实现呢？比如一二两张图的输入框，看起来就只有下面一条线，当输入框没有获取焦点时显示灰色，当输入框获取焦点时显示绿色。而第二张图直接左右各多出来半截。如果是我，我估计第一张图我会用俩控件实现，第二张图直接 UI 出 .9 图（捂脸ing）。</p>
 <p>而现在，我们可以用 <code>&lt;layer-list&gt;</code>这个属性来更优雅的实现这个效果。</p>
-<h3 id="初识-lt-layer-list-gt"><a href="#初识-lt-layer-list-gt" class="headerlink" title="初识 &lt;layer-list&gt;"></a>初识 <code>&lt;layer-list&gt;</code></h3><p><code>&lt;layer-list&gt;</code> 是 android 可绘制对象资源中的一种。<a href="https://developer.android.com/guide/topics/resources/drawable-resource?hl=zh-cn" target="_blank" rel="noopener">文档</a> 中描述：可绘制对象资源是一般概念，是指可在屏幕上绘制的图形，以及可以使用 getDrawable(int) 等 API 检索或者应用到具有 android:drawable 和 android:icon 等属性的其他 XML 资源的图形。有以下几类：<br>|类别  |  描述| 创建|<br>|–|–|–|<br>|位图文件  | 位图图形文件（.png、.jpg 或 .gif） | BitmapDrawable |<br>|九宫格文件  | 具有可拉伸区域的 PNG 文件，允许根据内容调整图像大小 (.9.png) | BitmapDrawable |<br>|<strong>图层列表</strong>  | <strong>管理其他可绘制对象阵列的可绘制对象。它们按阵列顺序绘制，因此索引最大的元素绘制在顶部</strong> |<strong>LayerDrawable</strong> |<br>|状态列表  |此 XML 文件为不同状态引用不同位图图形（例如，按下按钮时使用不同的图像） | StateListDrawable|<br>|级别列表 | 此 XML 文件用于定义管理大量备选可绘制对象的可绘制对象，每个可绘制对象都分配有最大的备选数量 | LevelListDrawable|<br>|转换可绘制对象  | 此 XML 文件用于定义可在两种可绘制对象资源之间交错淡出的可绘制对象 | TransitionDrawable|<br>|插入可绘制对象|此 XML 文件用于定义以指定距离插入其他可绘制对象的可绘制对象。当视图需要小于视图实际边界的背景可绘制对象时，此类可绘制对象很有用 |InsetDrawable |<br>|裁剪可绘制对象  | 此 XML 文件用于定义更改其他可绘制对象大小（根据其当前级别值）的可绘制对象 | ScaleDrawable|<br>|形状可绘制对象件  | 此 XML 文件用于定义几何形状（包括颜色和渐变） | ShapeDrawable|<br>这么多种类，里面有几个大家都很熟悉的： 位图文件、九宫格文件 和形状可绘制对象件。就是我们平常用的 drawable、.9 图片 和 shape 文件。其它的种类我还没有接触过。今天说一下其中的<strong>图层列表</strong>。</p>
+<h3 id="初识-lt-layer-list-gt"><a href="#初识-lt-layer-list-gt" class="headerlink" title="初识 &lt;layer-list&gt;"></a>初识 <code>&lt;layer-list&gt;</code></h3><p><code>&lt;layer-list&gt;</code> 是 android 可绘制对象资源中的一种。<a href="https://developer.android.com/guide/topics/resources/drawable-resource?hl=zh-cn" target="_blank" rel="noopener">文档</a> 中描述：可绘制对象资源是一般概念，是指可在屏幕上绘制的图形，以及可以使用 getDrawable(int) 等 API 检索或者应用到具有 android:drawable 和 android:icon 等属性的其他 XML 资源的图形。有以下几类：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">类别</th>
+<th style="text-align:center">描述</th>
+<th style="text-align:center">创建</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">位图文件</td>
+<td style="text-align:center">位图图形文件（.png、.jpg 或 .gif）</td>
+<td style="text-align:center">BitmapDrawable</td>
+</tr>
+<tr>
+<td style="text-align:center">九宫格文件</td>
+<td style="text-align:center">具有可拉伸区域的 PNG 文件，允许根据内容调整图像大小 (.9.png)</td>
+<td style="text-align:center">BitmapDrawable</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>图层列表</strong></td>
+<td style="text-align:center"><strong>管理其他可绘制对象阵列的可绘制对象。它们按阵列顺序绘制，因此索引最大的元素绘制在顶部</strong></td>
+<td style="text-align:center"><strong>LayerDrawable</strong></td>
+</tr>
+<tr>
+<td style="text-align:center">状态列表</td>
+<td style="text-align:center">此 XML 文件为不同状态引用不同位图图形（例如，按下按钮时使用不同的图像）</td>
+<td style="text-align:center">StateListDrawable</td>
+</tr>
+<tr>
+<td style="text-align:center">级别列表</td>
+<td style="text-align:center">此 XML 文件用于定义管理大量备选可绘制对象的可绘制对象，每个可绘制对象都分配有最大的备选数量</td>
+<td style="text-align:center">LevelListDrawable</td>
+</tr>
+<tr>
+<td style="text-align:center">转换可绘制对象</td>
+<td style="text-align:center">此 XML 文件用于定义可在两种可绘制对象资源之间交错淡出的可绘制对象</td>
+<td style="text-align:center">TransitionDrawable</td>
+</tr>
+<tr>
+<td style="text-align:center">插入可绘制对象</td>
+<td style="text-align:center">此 XML 文件用于定义以指定距离插入其他可绘制对象的可绘制对象。当视图需要小于视图实际边界的背景可绘制对象时，此类可绘制对象很有用</td>
+<td style="text-align:center">InsetDrawable</td>
+</tr>
+<tr>
+<td style="text-align:center">裁剪可绘制对象</td>
+<td style="text-align:center">此 XML 文件用于定义更改其他可绘制对象大小（根据其当前级别值）的可绘制对象</td>
+<td style="text-align:center">ScaleDrawable</td>
+</tr>
+<tr>
+<td style="text-align:center">形状可绘制对象件</td>
+<td style="text-align:center">此 XML 文件用于定义几何形状（包括颜色和渐变）</td>
+<td style="text-align:center">ShapeDrawable</td>
+</tr>
+</tbody>
+</table>
+<p>这么多种类，里面有几个大家都很熟悉的： 位图文件、九宫格文件 和形状可绘制对象件。就是我们平常用的 drawable、.9 图片 和 shape 文件。其它的种类我还没有接触过。今天说一下其中的<strong>图层列表</strong>。</p>
 <h3 id="lt-layer-list-gt-属性介绍"><a href="#lt-layer-list-gt-属性介绍" class="headerlink" title="&lt;layer-list&gt;属性介绍"></a><code>&lt;layer-list&gt;</code>属性介绍</h3><p>图层列表中的每个可绘制对象按照列表的<strong>顺序绘制</strong>，列表中的最后一个可绘制对象绘于顶部。<br>每个可绘制对象由单一  <code>&lt;layer-list&gt;</code>  元素内的  <code>&lt;item&gt;</code>  元素表示。<br>语法示例：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;layer-list</span><br><span class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot; &gt;</span><br><span class="line">    &lt;item</span><br><span class="line">        android:drawable=&quot;@[package:]drawable/drawable_resource&quot;</span><br><span class="line">        android:id=&quot;@[+][package:]id/resource_name&quot;</span><br><span class="line">        android:top=&quot;dimension&quot;</span><br><span class="line">        android:right=&quot;dimension&quot;</span><br><span class="line">        android:bottom=&quot;dimension&quot;</span><br><span class="line">        android:left=&quot;dimension&quot; /&gt;</span><br><span class="line">&lt;/layer-list&gt;</span><br></pre></td></tr></table></figure>
-<p>这里说一下达到复杂效果常用的几个属性：<br>|属性|描述<br>|–|–|<br>|android:top | 顶部偏移（像素）|<br>|android:Left | 左边偏移（像素）|<br>|android:Right | 右边偏移（像素）|<br>|android:Bottom | 底部偏移（像素）|<br>很简单，有没有。因为就像定义所说，图层列表按顺序绘制，所以我们经常会根据设置顺序加上上下左右的偏移量来达到 ui 效果。</p>
+<p>这里说一下达到复杂效果常用的几个属性：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>描述  </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>android:top</td>
+<td>顶部偏移（像素）</td>
+</tr>
+<tr>
+<td>android:Left</td>
+<td>左边偏移（像素）</td>
+</tr>
+<tr>
+<td>android:Right</td>
+<td>右边偏移（像素）</td>
+</tr>
+<tr>
+<td>android:Bottom</td>
+<td>底部偏移（像素）</td>
+</tr>
+</tbody>
+</table>
+<p>很简单，有没有。因为就像定义所说，图层列表按顺序绘制，所以我们经常会根据设置顺序加上上下左右的偏移量来达到 ui 效果。</p>
 <h3 id="lt-layer-list-gt-实战"><a href="#lt-layer-list-gt-实战" class="headerlink" title="&lt;layer-list&gt;实战"></a><code>&lt;layer-list&gt;</code>实战</h3><p>首先以第一个输入框获取焦点时效果为例，其实思路很简单，就是最底层是一个绿色矩形，然后上面再盖一个灰色矩形，只不过灰色矩形距离底部 1dp 的高度，所以就达到只有底部一条绿线的效果。所以有了顺序和偏移量，代码如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;layer-list xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot; &gt;</span><br><span class="line">    &lt;item&gt;</span><br><span class="line">        &lt;shape android:shape=&quot;rectangle&quot; &gt;</span><br><span class="line">            &lt;solid android:color=&quot;#00BE3C&quot; /&gt;</span><br><span class="line">        &lt;/shape&gt;</span><br><span class="line">    &lt;/item&gt;</span><br><span class="line">    &lt;item</span><br><span class="line">        android:bottom=&quot;1dp&quot;&gt;</span><br><span class="line">        &lt;shape android:shape=&quot;rectangle&quot; &gt;</span><br><span class="line">            &lt;solid android:color=&quot;#E5E5E5&quot; /&gt;</span><br><span class="line">        &lt;/shape&gt;</span><br><span class="line">    &lt;/item&gt;</span><br><span class="line">&lt;/layer-list&gt;</span><br></pre></td></tr></table></figure>
 <p>同理，第二个输入框的效果的思路：底部是一个矩形边框，边框颜色为绿色，宽 1dp，填充白色，然后上面再盖一层白色矩形，然后让白色矩形距离底部 4dp，就实现效果。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;layer-list xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;&gt;</span><br><span class="line">    &lt;item&gt;</span><br><span class="line">        &lt;shape android:shape=&quot;rectangle&quot;&gt;</span><br><span class="line">            &lt;stroke android:color=&quot;#00BE3C&quot; android:width=&quot;1dp&quot;&gt;&lt;/stroke&gt;</span><br><span class="line">            &lt;solid android:color=&quot;#ffffff&quot;&gt;&lt;/solid&gt;</span><br><span class="line">        &lt;/shape&gt;</span><br><span class="line">    &lt;/item&gt;</span><br><span class="line">    &lt;item android:bottom=&quot;4dp&quot;&gt;</span><br><span class="line">        &lt;shape android:shape=&quot;rectangle&quot;&gt;</span><br><span class="line">            &lt;solid android:color=&quot;#ffffff&quot;&gt;&lt;/solid&gt;</span><br><span class="line">        &lt;/shape&gt;</span><br><span class="line">    &lt;/item&gt;</span><br><span class="line">&lt;/layer-list&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>所以其实很简单，我们拿到 u i效果后，首先要分析根据顺序每一层绘制什么，然后确定每一层的偏移量就好了</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>所以其实很简单，我们拿到 UI 效果后，首先要分析根据顺序每一层绘制什么，然后确定每一层的偏移量就好了</p>
 <h3 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h3><blockquote>
 <p><a href="https://developer.android.com/guide/topics/resources/drawable-resource?hl=zh-cn#LayerList" target="_blank" rel="noopener">https://developer.android.com/guide/topics/resources/drawable-resource?hl=zh-cn#LayerList</a></p>
 </blockquote>
@@ -537,18 +619,18 @@
           
             <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a><strong>前言</strong></h3><p>昨天在处理 UI 界面微调的时候，再一次用到了 .9 格式图片。我们是 UI 只出 JPG 格式的图， .9 图需要自己做。 因为项目之前已经用到了 .9 图，所以我之前也就大致查了下 .9 图的制作方法，只是大致记住调整四条边就 ok 了。然而昨天自己调的时候忘了四条边的含义，折腾了一会。 所以，虽然很简单，还是要记录一下的。</p>
 <h3 id="为什么用-9图片"><a href="#为什么用-9图片" class="headerlink" title="为什么用.9图片"></a><strong>为什么用.9图片</strong></h3><p>我们知道一般的图片被拉伸会失真。而我们有些场景如聊天消息气泡因内容不固定，如果被拉伸就会失真。如下图：</p>
-<p><img src="https://img-blog.csdn.net/20180915140803488?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNzAzODc3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p><img src="https://i.loli.net/2018/09/21/5ba50376c48f4.png" alt=" "></p>
 <p>用了.9图后，效果是这样的：</p>
-<p><img src="https://img-blog.csdn.net/20180915140825928?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNzAzODc3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p><img src="https://i.loli.net/2018/09/21/5ba5039ee00af.png" alt=" "></p>
 <p>是不是立竿见影？</p>
 <h3 id="如何制作-9-图片？"><a href="#如何制作-9-图片？" class="headerlink" title="如何制作 .9 图片？"></a><strong>如何制作 .9 图片？</strong></h3><h4 id="1-修改文件后缀名"><a href="#1-修改文件后缀名" class="headerlink" title="1.修改文件后缀名"></a><strong>1.修改文件后缀名</strong></h4><p>拿到 UI 给的 jpg 的 图片导入到 android studio 之后，需要修改图片名称添加 .9 标识。如 message_bubble.9.png 。</p>
-<p><img src="https://img-blog.csdn.net/20180915114821594?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNzAzODc3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p><img src="https://i.loli.net/2018/09/21/5ba503e24e891.png" alt=""></p>
 <p>修改完名称后，就可以看到，图片预览那一栏下面多了两个 tab 栏：9-Patch 和 ImageFileEditor .。 选中 9-Patch 栏，我们可以看到如下界面：</p>
-<p><img src="https://img-blog.csdn.net/20180915115723682?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNzAzODc3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p><img src="https://i.loli.net/2018/09/21/5ba50420abf6a.png" alt=" "></p>
 <p>左边的是我们的原图，右边可以看到有3张图。其中1代表竖直方向拉伸后的图片，2 代表水平方向拉伸后的图片，3代表竖直方向和水平方向都拉伸后的图片。<br>可以看到，拉伸后气泡的那个尖角已经变形了。这张图也许变形的不明显，这时我们调整一下patch scale 放大查看，效果就很明显了。</p>
 <p>所以，下面就让我们开始制作.9图片吧。</p>
 <h4 id="2-制作-9图片"><a href="#2-制作-9图片" class="headerlink" title="2.制作.9图片"></a><strong>2.制作.9图片</strong></h4><p>将鼠标移到左边原图上，这个时候会看到边界显示的有好几条线，通过移动这几条线，就可以给图片绘制1px宽度的黑线。</p>
-<p><img src="https://img-blog.csdn.net/20180915125404432?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNzAzODc3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p><img src="https://i.loli.net/2018/09/21/5ba5045a1be5e.png" alt=""></p>
 <p>这里就必须说一下四条边上黑线的含义了，也是制作的秘诀。</p>
 <ul>
 <li><strong>上边：控制<font color="blue">图片</font>水平方向可拉伸的区域</strong></li>
@@ -558,7 +640,7 @@
 </ul>
 <p><strong>也就是左上两条边控制图片本身的拉伸，右下两条边控制图片包裹内容的显示区域。</strong></p>
 <p>那聊天气泡的.9图就可以这样做了：</p>
-<p><img src="https://img-blog.csdn.net/20180915131237386?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNzAzODc3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p><img src="https://i.loli.net/2018/09/21/5ba5049d734e0.png" alt=""></p>
 <p>这里说一下我为什么要这么做，因为是消息气泡，所以这几条边是这样弄的:</p>
 <ul>
 <li>上边：代表水平可拉伸区域，在水平方向设置一点黑线（不用设置很长，因为黑线区域就表示可无限拉伸）</li>
@@ -574,7 +656,7 @@
 <li><strong>show patches</strong>：显示图片被拉伸的区域，也就是上图左边原图中间那个红色小区域</li>
 <li><strong>show bad patches</strong>: 显示做的不好的可拉伸的区域。比如，我们的消息气泡的那个尖尖我们肯定不想被拉伸，如果我们照如下图设置左边黑线让尖角也是可拉伸的区域，就会显示 bad patches。</li>
 </ul>
-<p><img src="https://img-blog.csdn.net/20180915132857869?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNzAzODc3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p><img src="https://i.loli.net/2018/09/21/5ba504c5663a1.png" alt=""></p>
 <p>到此，我们的 .9 图就制作完毕了。</p>
 <h3 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a><strong>参考文章</strong></h3><blockquote>
 <p><a href="https://www.jianshu.com/p/3fd048644e3f" target="_blank" rel="noopener">https://www.jianshu.com/p/3fd048644e3f</a><br><a href="http://www.ui.cn/detail/290941.html" target="_blank" rel="noopener">http://www.ui.cn/detail/290941.html</a></p>
