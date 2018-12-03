@@ -253,6 +253,205 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://xiaxiayang.github.io/2018/12/03/android -- EditText 设置 imeOptions 属性为何失效？/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xiaxiayang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/25956745?s=400&u=3b875396982ce81f05ad70778ceee4e3daf8d909&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏霂熠雨">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/03/android -- EditText 设置 imeOptions 属性为何失效？/" itemprop="url">android -- EditText 设置 imeOptions 属性为何失效？</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-03T22:57:13+08:00">
+                2018-12-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/12/03/android -- EditText 设置 imeOptions 属性为何失效？/" class="leancloud_visitors" data-flag-title="android -- EditText 设置 imeOptions 属性为何失效？">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+				 <span>℃</span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>最近改 bug 的时候碰到一个小知识点，在搜索界面希望键盘上的 enter 键改为搜索按钮。也就是下图的效果，是不是非常常见。<br><img src="https://img-blog.csdnimg.cn/20181202203641503.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNzAzODc3,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>然后我就记得 Editext 有个 imeOptions 的属性，可以设置 enter 键的效果。所以果断在 xml 中写下 <code>android:imeOptions=&quot;actionSearch&quot;</code>，然后把问题改为已修复，信心满满。结果等编译运行起来在手机上发现没有起作用，还是 enter 键。 搜索了一下，发现大家都是这样回答的：</p>
+<blockquote>
+<p>如果设置了 imeOptions 属性，键盘没有变化 ，那么需要单独加一些其他的属性配合使用，xml中 属性设置：<br>1 将singleLine设置为true<br>2 或者将inputType设置为text</p>
+</blockquote>
+<p>试了一下，果然 ok 了。但为什么这样设置显示就对了呢？你是不是同样也有疑问？ 所以就让我们共同去探寻答案吧！</p>
+<h4 id="ImeOptions-属性源码解析"><a href="#ImeOptions-属性源码解析" class="headerlink" title="ImeOptions 属性源码解析"></a>ImeOptions 属性源码解析</h4><p>这里首先推荐一个看源码的插件：<a href="https://github.com/pengwei1024/AndroidSourceViewer" target="_blank" rel="noopener">AndroidSourceView</a>。</p>
+<h5 id="Step1"><a href="#Step1" class="headerlink" title="Step1"></a>Step1</h5><p>因为如果是在 JAVA 文件中，我们设置 imeOptions  属性代码为： <code>editText.setImeOptions(EditorInfo.IME_ACTION_SEARCH);</code><br>所以首先要定位到 <code>setImeOptions()</code> 这个方法 ，在 EdiText 中没有搜到，所以果断跳到 EditText 的父类 TextView 的源码中，然后发现目标：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">    * Change the editor type integer associated with the text view, which</span><br><span class="line">    * is reported to an Input Method Editor (IME) with &#123;@link EditorInfo#imeOptions&#125;</span><br><span class="line">    * when it has focus.</span><br><span class="line">    * @see #getImeOptions</span><br><span class="line">    * @see android.view.inputmethod.EditorInfo</span><br><span class="line">    * @attr ref android.R.styleable#TextView_imeOptions</span><br><span class="line">    * 当输入法编译器(IME)获取焦点的时候,通过&#123;@link EditorInfo#imeOptions&#125; 报告给输入法编辑器，</span><br><span class="line">    * 来更改与文本视图关联的编辑器类型值。</span><br><span class="line">    */</span><br><span class="line">   public void setImeOptions(int imeOptions) &#123;</span><br><span class="line">      //1.判断是否需要创建 Editor 对象</span><br><span class="line">       createEditorIfNeeded();</span><br><span class="line">       //2.判断是否需要创建 InputContentType </span><br><span class="line">       mEditor.createInputContentTypeIfNeeded();</span><br><span class="line">       //3. 将入参赋值给InputContentType.imeOptions</span><br><span class="line">       mEditor.mInputContentType.imeOptions = imeOptions;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>这个方法里面只是进行了判断是否需要创建一些对象，然后将我们的入参赋值给 InputContentType.imeOptions。从这方法的注释中我们可以知道关键对象是 <strong><code>EditorInfo#imeOptions</code></strong> 。</p>
+<h5 id="Step2"><a href="#Step2" class="headerlink" title="Step2"></a>Step2</h5><p>继续搜索关键字  imeOptions ，然后发现下面这个方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">   public InputConnection onCreateInputConnection(EditorInfo outAttrs) &#123;</span><br><span class="line">       if (onCheckIsTextEditor() &amp;&amp; isEnabled()) &#123;</span><br><span class="line">           mEditor.createInputMethodStateIfNeeded();</span><br><span class="line">           outAttrs.inputType = getInputType();</span><br><span class="line">           if (mEditor.mInputContentType != null) &#123;</span><br><span class="line">               outAttrs.imeOptions = mEditor.mInputContentType.imeOptions;</span><br><span class="line">               outAttrs.privateImeOptions = mEditor.mInputContentType.privateImeOptions;</span><br><span class="line">               outAttrs.actionLabel = mEditor.mInputContentType.imeActionLabel;</span><br><span class="line">               outAttrs.actionId = mEditor.mInputContentType.imeActionId;</span><br><span class="line">               outAttrs.extras = mEditor.mInputContentType.extras;</span><br><span class="line">               outAttrs.hintLocales = mEditor.mInputContentType.imeHintLocales;</span><br><span class="line">           &#125; else &#123;</span><br><span class="line">               outAttrs.imeOptions = EditorInfo.IME_NULL;</span><br><span class="line">               outAttrs.hintLocales = null;</span><br><span class="line">           &#125;</span><br><span class="line">           if (focusSearch(FOCUS_DOWN) != null) &#123;</span><br><span class="line">               outAttrs.imeOptions |= EditorInfo.IME_FLAG_NAVIGATE_NEXT;</span><br><span class="line">           &#125;</span><br><span class="line">           if (focusSearch(FOCUS_UP) != null) &#123;</span><br><span class="line">               outAttrs.imeOptions |= EditorInfo.IME_FLAG_NAVIGATE_PREVIOUS;</span><br><span class="line">           &#125;</span><br><span class="line">           if ((outAttrs.imeOptions &amp; EditorInfo.IME_MASK_ACTION)</span><br><span class="line">                   == EditorInfo.IME_ACTION_UNSPECIFIED) &#123;</span><br><span class="line">               if ((outAttrs.imeOptions &amp; EditorInfo.IME_FLAG_NAVIGATE_NEXT) != 0) &#123;</span><br><span class="line">                   // An action has not been set, but the enter key will move to</span><br><span class="line">                   // the next focus, so set the action to that.</span><br><span class="line">                   outAttrs.imeOptions |= EditorInfo.IME_ACTION_NEXT;</span><br><span class="line">               &#125; else &#123;</span><br><span class="line">                   // An action has not been set, and there is no focus to move</span><br><span class="line">                   // to, so let&apos;s just supply a &quot;done&quot; action.</span><br><span class="line">                   outAttrs.imeOptions |= EditorInfo.IME_ACTION_DONE;</span><br><span class="line">               &#125;</span><br><span class="line">               if (!shouldAdvanceFocusOnEnter()) &#123;</span><br><span class="line">                   outAttrs.imeOptions |= EditorInfo.IME_FLAG_NO_ENTER_ACTION;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">           if (isMultilineInputType(outAttrs.inputType)) &#123;</span><br><span class="line">               // Multi-line text editors should always show an enter key.</span><br><span class="line">               outAttrs.imeOptions |= EditorInfo.IME_FLAG_NO_ENTER_ACTION;</span><br><span class="line">           &#125;</span><br><span class="line">           outAttrs.hintText = mHint;</span><br><span class="line">           if (mText instanceof Editable) &#123;</span><br><span class="line">               InputConnection ic = new EditableInputConnection(this);</span><br><span class="line">               outAttrs.initialSelStart = getSelectionStart();</span><br><span class="line">               outAttrs.initialSelEnd = getSelectionEnd();</span><br><span class="line">               outAttrs.initialCapsMode = ic.getCursorCapsMode(getInputType());</span><br><span class="line">               return ic;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">       return null;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>然后我们只关心我们探究的信息，所以<strong>伪代码</strong>如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">public InputConnection onCreateInputConnection(EditorInfo outAttrs) &#123;</span><br><span class="line">            //  return mEditor == null ? EditorInfo.TYPE_NULL : mEditor.mInputType</span><br><span class="line">            outAttrs.inputType = getInputType();</span><br><span class="line">            if (mEditor.mInputContentType != null) &#123;</span><br><span class="line">                outAttrs.imeOptions = mEditor.mInputContentType.imeOptions;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                outAttrs.imeOptions = EditorInfo.IME_NULL;</span><br><span class="line">            &#125;</span><br><span class="line">            if (focusSearch(FOCUS_DOWN) != null) &#123;</span><br><span class="line">                outAttrs.imeOptions |= EditorInfo.IME_FLAG_NAVIGATE_NEXT;</span><br><span class="line">            &#125;</span><br><span class="line">            if (focusSearch(FOCUS_UP) != null) &#123;</span><br><span class="line">                outAttrs.imeOptions |= EditorInfo.IME_FLAG_NAVIGATE_PREVIOUS;</span><br><span class="line">            &#125;</span><br><span class="line">            if ((outAttrs.imeOptions &amp; EditorInfo.IME_MASK_ACTION)</span><br><span class="line">                    == EditorInfo.IME_ACTION_UNSPECIFIED) &#123;</span><br><span class="line">             //..代码省略</span><br><span class="line">            &#125;</span><br><span class="line">            if (isMultilineInputType(outAttrs.inputType)) &#123;</span><br><span class="line">                // Multi-line text editors should always show an enter key.</span><br><span class="line">                //多行文本编译器总是会显示 enter 键</span><br><span class="line">                outAttrs.imeOptions |= EditorInfo.IME_FLAG_NO_ENTER_ACTION;</span><br><span class="line">            &#125;</span><br><span class="line">        return null;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h5 id="Step3"><a href="#Step3" class="headerlink" title="Step3"></a>Step3</h5><p>我们首先分析一下：</p>
+<ul>
+<li>第一个 if 判断： <code>mEditor.mInputContentType</code> 这个值是否为空，答案是 false ，因为我们在<code>setImeOptions</code> 方法的第 3 步已经给它赋值了，所以不会为空，所以<code>outAttrs.imeOptions</code> 结果为我们设置的值</li>
+<li>第二个 if 判断：是来寻找我们的 Editext 对象的往下的一个方向是否存在可以获取焦点的 View，这个得看实际输入框下面布局是否还会有一个输入框，目前项目没有，所以 false</li>
+<li>第三个 if 判断：跟第二个条件一样，只过是方向为向上查找</li>
+<li><p>第四个 if 判断：首先 <code>(outAttrs.imeOptions &amp; EditorInfo.IME_MASK_ACTION</code>值是多少呢，我们代码里设置的值是 <code>IME_ACTION_SEARCH</code> ，值为 3，<code>EditorInfo.IME_MASK_ACTION</code> 的值为 255 ,取二进制值为 00000011 &amp; 1111 1111 = 00000011 十进制为 3，而<code>EditorInfo.IME_ACTION_UNSPECIFIED</code> 值为 0，所以结果为 false。</p>
+<p>到目前为止 <strong><code>outAttrs.imeOptions</code></strong> 的结果依然为我们在代码中设置的值。</p>
+<h5 id="Step4"><a href="#Step4" class="headerlink" title="Step4"></a>Step4</h5><p>来看最后一个 if 判断：<code>isMultilineInputType(outAttrs.inputType)</code> 光看字段意思我们能猜到判断输入框是不是多行输入。看一下具体代码：</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">private static boolean isMultilineInputType(int type) &#123;</span><br><span class="line">        return (type &amp; (EditorInfo.TYPE_MASK_CLASS | EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE))</span><br><span class="line">                == (EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>type 这个值为我们在 onCreateInputConnection() 方法中通过getInputType () 方法获取，结果为返回我们代码中设置的 inputType 值，而我们代码中没有设置，那么这个 inputType 的默认值是什么呢？源码中没有找到，然后我自己 debug 了一下，结果如下图：<br><img src="https://img-blog.csdnimg.cn/2018120321243029.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNzAzODc3,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>所以默认值为 131073，而 InputType 各种类型的值如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">public interface InputType &#123;</span><br><span class="line">    int TYPE_CLASS_DATETIME = 4;</span><br><span class="line">    int TYPE_CLASS_NUMBER = 2;</span><br><span class="line">    int TYPE_CLASS_PHONE = 3;</span><br><span class="line">    int TYPE_CLASS_TEXT = 1;</span><br><span class="line">    int TYPE_DATETIME_VARIATION_DATE = 16;</span><br><span class="line">    int TYPE_DATETIME_VARIATION_NORMAL = 0;</span><br><span class="line">    int TYPE_DATETIME_VARIATION_TIME = 32;</span><br><span class="line">    int TYPE_MASK_CLASS = 15;</span><br><span class="line">    int TYPE_MASK_FLAGS = 16773120;</span><br><span class="line">    int TYPE_MASK_VARIATION = 4080;</span><br><span class="line">    int TYPE_NULL = 0;</span><br><span class="line">    int TYPE_NUMBER_FLAG_DECIMAL = 8192;</span><br><span class="line">    int TYPE_NUMBER_FLAG_SIGNED = 4096;</span><br><span class="line">    int TYPE_NUMBER_VARIATION_NORMAL = 0;</span><br><span class="line">    int TYPE_NUMBER_VARIATION_PASSWORD = 16;</span><br><span class="line">    int TYPE_TEXT_FLAG_AUTO_COMPLETE = 65536;</span><br><span class="line">    int TYPE_TEXT_FLAG_AUTO_CORRECT = 32768;</span><br><span class="line">    int TYPE_TEXT_FLAG_CAP_CHARACTERS = 4096;</span><br><span class="line">    int TYPE_TEXT_FLAG_CAP_SENTENCES = 16384;</span><br><span class="line">    int TYPE_TEXT_FLAG_CAP_WORDS = 8192;</span><br><span class="line">    int TYPE_TEXT_FLAG_IME_MULTI_LINE = 262144;</span><br><span class="line">    int TYPE_TEXT_FLAG_MULTI_LINE = 131072;</span><br><span class="line">    int TYPE_TEXT_FLAG_NO_SUGGESTIONS = 524288;</span><br><span class="line">    int TYPE_TEXT_VARIATION_EMAIL_ADDRESS = 32;</span><br><span class="line">    int TYPE_TEXT_VARIATION_EMAIL_SUBJECT = 48;</span><br><span class="line">    int TYPE_TEXT_VARIATION_FILTER = 176;</span><br><span class="line">    int TYPE_TEXT_VARIATION_LONG_MESSAGE = 80;</span><br><span class="line">    int TYPE_TEXT_VARIATION_NORMAL = 0;</span><br><span class="line">    int TYPE_TEXT_VARIATION_PASSWORD = 128;</span><br><span class="line">    int TYPE_TEXT_VARIATION_PERSON_NAME = 96;</span><br><span class="line">    int TYPE_TEXT_VARIATION_PHONETIC = 192;</span><br><span class="line">    int TYPE_TEXT_VARIATION_POSTAL_ADDRESS = 112;</span><br><span class="line">    int TYPE_TEXT_VARIATION_SHORT_MESSAGE = 64;</span><br><span class="line">    int TYPE_TEXT_VARIATION_URI = 16;</span><br><span class="line">    int TYPE_TEXT_VARIATION_VISIBLE_PASSWORD = 144;</span><br><span class="line">    int TYPE_TEXT_VARIATION_WEB_EDIT_TEXT = 160;</span><br><span class="line">    int TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS = 208;</span><br><span class="line">    int TYPE_TEXT_VARIATION_WEB_PASSWORD = 224;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结合 stackoverflow 上 <a href="https://stackoverflow.com/questions/22524904/default-inputtype-of-edittext-in-android" target="_blank" rel="noopener">Default inputType of EditText in android</a> 答案和 InputType 的值，也就是说 inputType 默认值 为 <code>InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_MULTI_LINE</code> 组合的结果。</p>
+<p>然后我们继续往下看，isMultilineInputType() 方法的返回值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(type &amp; (EditorInfo.TYPE_MASK_CLASS | EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE))</span><br><span class="line">                == (EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE</span><br></pre></td></tr></table></figure>
+<p>转换为十进制为：<code>(131073 &amp; (15 | 131072)) == 1 | 131072</code><br>转换为二进制为：<code>(100000000000000001 &amp;(1111 | 100000000000000000)) == 1 | 100000000000000000</code><br>即 <code>100000000000000001  == 100000000000000001</code><br>即 true。</p>
+<p>所以会进入最后一个条件中，而该返回值明确指出 <strong>多行文本编译器总是会显示 enter 键</strong> 。所以我们会看到我们设置的属性<strong>失效</strong>了。</p>
+<p>而如果我们设置了 <code>singleLine = true</code> ，源码中是这样设置的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">    * Adds or remove the EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE on the mInputType.</span><br><span class="line">    * @param singleLine</span><br><span class="line">    */</span><br><span class="line">   private void setInputTypeSingleLine(boolean singleLine) &#123;</span><br><span class="line">       if (mEditor != null</span><br><span class="line">               &amp;&amp; (mEditor.mInputType &amp; EditorInfo.TYPE_MASK_CLASS)</span><br><span class="line">                       == EditorInfo.TYPE_CLASS_TEXT) &#123;</span><br><span class="line">           if (singleLine) &#123;</span><br><span class="line">               mEditor.mInputType &amp;= ~EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE;</span><br><span class="line">           &#125; else &#123;</span><br><span class="line">               mEditor.mInputType |= EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>如果 singleLine 为 true，inputType = ~ 131072，即011111111111111111 ，最后计算结果为 <code>111111111111111111  == 100000000000000001</code>，显然 false。<br>或者设置了inputType = TYPE_CLASS_TEXT 我们也可以得出返回值为 false，所以不会进判断条件，也就是 imeOptions 的值就是我们在代码里或者 xml 中设置的。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>所以要让 imeOptions  起作用，关键是不能满足 可以多行输入的属性。<br> 有两种处理方案：</p>
+<blockquote>
+<p><strong><font color="black"> 1. 设置 singleLine 属性为 true</font></strong><br><strong><font color="green">2. 设置 inputType 属性。 而这个属性值不一定非要是 ‘text’ 即TYPE_CLASS_TEXT 类型，只要最后结果不是 131072 （也就是 InputType.TYPE_CLASS_TEXT |InputType.TYPE_TEXT_FLAG_MULTI_LINE 即可，根据需求来定是 设置 text 或者 纯数字键盘等等）</font></strong></p>
+</blockquote>
+<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="https://developer.android.google.cn/reference/android/view/inputmethod/EditorInfo" target="_blank" rel="noopener">EditorInfo文档</a><br><a href="https://blog.csdn.net/lastdream/article/details/24365633" target="_blank" rel="noopener">EditText中imeOptions属性使用及设置无效解决</a><br><a href="http://tool.oschina.net/hexconvert" target="_blank" rel="noopener">在线进制转换</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+<div>
+  
+</div>
+<div>
+      
+</div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://xiaxiayang.github.io/2018/12/03/React Native --踩坑记 之 创建指定 React Native版本的项目/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1843,7 +2042,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
