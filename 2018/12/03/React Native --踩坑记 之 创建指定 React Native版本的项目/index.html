@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前 言最近一段时间一直在写    RN 的项目，期间遇到了挺多的坑，然后想着记录一下填坑的过程（想看答案的小伙伴可以忽略我的心厉路程，直接跳到结尾总结处）。 step1. 我竟然偷偷的给自己挖了个坑？于是乎，第一步，赶紧新建一个demo，飞快地在  terminal 中输入 react native init yx_rnDemo ,漫长的等待后，项目成功建立。 然后用 IDE 打开 demo ，执">
+<meta name="keywords" content="android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="React Native --踩坑记 之 创建指定 React Native版本的项目">
+<meta property="og:url" content="https://xiaxiayang.github.io/2018/12/03/React Native --踩坑记 之 创建指定 React Native版本的项目/index.html">
+<meta property="og:site_name" content="夏霂熠雨">
+<meta property="og:description" content="前 言最近一段时间一直在写    RN 的项目，期间遇到了挺多的坑，然后想着记录一下填坑的过程（想看答案的小伙伴可以忽略我的心厉路程，直接跳到结尾总结处）。 step1. 我竟然偷偷的给自己挖了个坑？于是乎，第一步，赶紧新建一个demo，飞快地在  terminal 中输入 react native init yx_rnDemo ,漫长的等待后，项目成功建立。 然后用 IDE 打开 demo ，执">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20181103222931312.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNzAzODc3,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20181103222943285.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNzAzODc3,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20181103223149178.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNzAzODc3,size_16,color_FFFFFF,t_70">
+<meta property="og:updated_time" content="2018-12-03T14:54:49.585Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="React Native --踩坑记 之 创建指定 React Native版本的项目">
+<meta name="twitter:description" content="前 言最近一段时间一直在写    RN 的项目，期间遇到了挺多的坑，然后想着记录一下填坑的过程（想看答案的小伙伴可以忽略我的心厉路程，直接跳到结尾总结处）。 step1. 我竟然偷偷的给自己挖了个坑？于是乎，第一步，赶紧新建一个demo，飞快地在  terminal 中输入 react native init yx_rnDemo ,漫长的等待后，项目成功建立。 然后用 IDE 打开 demo ，执">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20181103222931312.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNzAzODc3,size_16,color_FFFFFF,t_70">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://xiaxiayang.github.io/2018/12/03/React Native --踩坑记 之 创建指定 React Native版本的项目/"/>
+
+
+
+
+
+  <title>React Native --踩坑记 之 创建指定 React Native版本的项目 | 夏霂熠雨</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+<a href="https://github.com/xiaxiayang" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; left: 0; transform: scale(-1, 1);" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style></a>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">夏霂熠雨</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://xiaxiayang.github.io/2018/12/03/React Native --踩坑记 之 创建指定 React Native版本的项目/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xiaxiayang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/25956745?s=400&u=3b875396982ce81f05ad70778ceee4e3daf8d909&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏霂熠雨">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">React Native --踩坑记 之 创建指定 React Native版本的项目</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-03T22:53:23+08:00">
+                2018-12-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/react-native/" itemprop="url" rel="index">
+                    <span itemprop="name">react native</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/12/03/React Native --踩坑记 之 创建指定 React Native版本的项目/" class="leancloud_visitors" data-flag-title="React Native --踩坑记 之 创建指定 React Native版本的项目">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+				 <span>℃</span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前-言"><a href="#前-言" class="headerlink" title="前 言"></a>前 言</h3><p>最近一段时间一直在写    RN 的项目，期间遇到了挺多的坑，然后想着记录一下填坑的过程（想看答案的小伙伴可以忽略我的心厉路程，直接跳到结尾总结处）。</p>
+<h4 id="step1-我竟然偷偷的给自己挖了个坑？"><a href="#step1-我竟然偷偷的给自己挖了个坑？" class="headerlink" title="step1. 我竟然偷偷的给自己挖了个坑？"></a>step1. 我竟然偷偷的给自己挖了个坑？</h4><p>于是乎，第一步，赶紧新建一个demo，飞快地在  terminal 中输入 <code>react native init yx_rnDemo</code> ,漫长的等待后，项目成功建立。 然后用 IDE 打开 demo ，执行<code>react-native run-android</code> 命令，结果半路夭折，没跑起来。仔细一看错误日志，发现 android 各种依赖都下载失败。然后看了下 <code>package.json</code> 中 react-native 的版本，发现引用的是最新版本，然后点击查看 android 文件夹，发现引用的 gradle 版本是 3.1.4  ,然鹅我用的还是 2.3.3 的版本。。</p>
+<p>因为比较懒（这句话在我的博客中出现的次数不低，懒是万恶之源，罪过罪过~~），不想升级，再配置一系列东西，所以按照 中文网 给出的创建指定版本的方法：</p>
+<blockquote>
+<p>提示：你可以使用–version参数（注意是两个杠）创建指定版本的项目。例如react-native init MyApp –version 0.44.3。注意版本号必须精确到两个小数点</p>
+</blockquote>
+<p>删掉 demo ，重新输入 <code>react native init yx_rnDemo --version0.47.2</code>  ,结果最后发现其实创建的还是最新版。。（内心 OS，what？？其实细心的朋友估计已经发现问题了，哈哈，嘘~~）</p>
+<p>然后开始各种面向搜索引擎，发现大家都是这样创建的啊，并且 RN 官网上给出的命令也是这样的，为什么别人没有问题，到我这就有问题了呢。</p>
+<p>然后换了一个命令执行： <code>react-native init yx_rnDemo --verbose --version 0.47.2</code> 想来看一下创建项目的详细信息，结果最后显示创建的竟然是对的！！ 就是 0.47.2 。 </p>
+<p>难道说加了一个 <code>--verbose</code> 条件就能创建成功了？不对啊，我看了下说 <code>--verbose</code>  条件只是会输出详细信息的啊，照理说不应该对结果产生什么影响的。然后不信邪的我把 <code>--verbose</code> 命令去掉，又执行了<code>react-native init yx_rnDemo  --version 0.47.2</code>，过了一会发现，竟然也是对的！！ </p>
+<p>吓得我赶紧去翻我第一次写的命令，一对比，发现我第一个命令<code>--verison</code> 后没有换行~~</p>
+<blockquote>
+<p>第一次的：react native init yx_rnDemo –version0.47.2<br>第二次的：react-native init yx_rnDemo  –version 0.47.2</p>
+</blockquote>
+<p>本来到这就可以结束的，然而作为一个想有灵魂的程序猿，还是很想弄清楚为什么不加空格就会创建最新版本，而不是提示语法错误的原因。</p>
+<h4 id="step2-一步步分析坑是如何产生的"><a href="#step2-一步步分析坑是如何产生的" class="headerlink" title="step2. 一步步分析坑是如何产生的"></a>step2. 一步步分析坑是如何产生的</h4><p>这里首先介绍一下， react-native 源码中 <a href="https://github.com/facebook/react-native/blob/83c7303a193fd0c998539be641ba2f8423cddd89/react-native-cli/index.js" target="_blank" rel="noopener">react-native-cli 文件夹下的 index.js </a> 这个文件很重要，它唯一的工作是初始化存储库，然后将所有命令转发到本地的 react-native 版本。所以我们初始化项目时做的操作可以在这个文件中找到。</p>
+<p>打开这个 js 文件，然后开始一探究竟吧。<br><strong>1.</strong> </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&apos;use strict&apos;;</span><br><span class="line"></span><br><span class="line">var fs = require(&apos;fs&apos;);</span><br><span class="line">var path = require(&apos;path&apos;);</span><br><span class="line">var exec = require(&apos;child_process&apos;).exec;</span><br><span class="line">var execSync = require(&apos;child_process&apos;).execSync;</span><br><span class="line">var chalk = require(&apos;chalk&apos;);</span><br><span class="line">var prompt = require(&apos;prompt&apos;);</span><br><span class="line">var semver = require(&apos;semver&apos;);</span><br><span class="line">/**</span><br><span class="line"> * Used arguments:</span><br><span class="line"> *   -v --version - to print current version of react-native-cli and react-native dependency</span><br><span class="line"> *   if you are in a RN app folder</span><br><span class="line"> * init - to create a new project and npm install it</span><br><span class="line"> *   --verbose - to print logs while init</span><br><span class="line"> *   --template - name of the template to use, e.g. --template navigation</span><br><span class="line"> *   --version &lt;alternative react-native package&gt; - override default (https://registry.npmjs.org/react-native@latest),</span><br><span class="line"> *      package to install, examples:</span><br><span class="line"> *     - &quot;0.22.0-rc1&quot; - A new app will be created using a specific version of React Native from npm repo</span><br><span class="line"> *     - &quot;https://registry.npmjs.org/react-native/-/react-native-0.20.0.tgz&quot; - a .tgz archive from any npm repo</span><br><span class="line"> *     - &quot;/Users/home/react-native/react-native-0.22.0.tgz&quot; - for package prepared with `npm pack`, useful for e2e tests</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">var options = require(&apos;minimist&apos;)(process.argv.slice(2));</span><br></pre></td></tr></table></figure>
+<p>文件的前 62 行都是在声明变量及引用，其中有几个变量这里我们需要知道它们是的作用：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">变量名</th>
+<th style="text-align:left">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">fs</td>
+<td style="text-align:left">Node.js 中 文件系统操作的模块</td>
+</tr>
+<tr>
+<td style="text-align:left">path</td>
+<td style="text-align:left">Node.js 中用于处理文件路径的小工具的模块</td>
+</tr>
+<tr>
+<td style="text-align:left">exec</td>
+<td style="text-align:left">Node.js 中子进程模块， 衍生一个 shell 并在 shell 上运行命令</td>
+</tr>
+<tr>
+<td style="text-align:left">execSync</td>
+<td style="text-align:left">exec 的同步函数，会阻塞 Node.js 事件循环</td>
+</tr>
+<tr>
+<td style="text-align:left">chalk</td>
+<td style="text-align:left">定制控制台日志的输入样式的一个插件</td>
+</tr>
+<tr>
+<td style="text-align:left">prompt</td>
+<td style="text-align:left">node 命令行输入控件</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>semver</strong></td>
+<td style="text-align:left"><strong>semver 语义化版本号</strong></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>options</strong></td>
+<td style="text-align:left"><strong>轻量级的命令行参数解析工具</strong></td>
+</tr>
+</tbody>
+</table>
+<p>其中一个很关键的变量 options ，也就是引用的<code>require(&#39;minimist&#39;)(process.argv.slice(2))</code> ，是一个命令行参数解析工具，具体的介绍可以<a href="https://jarvys.github.io/2014/06/01/minimist-js/" target="_blank" rel="noopener">参考这里</a>，它是以键值对进行解析的。比如我们输入的命令行是：<code>react-native init yx_rnDemo --version 0.47.2</code> ,其中 <code>--version 0.47.2</code> 就是一个可解析的键值对，key 为 version ， value 为 0.47.2 。</p>
+<p>这个文件中，我们有用到的键值对的值在截图的注释中可以看到：</p>
+<ul>
+<li><code>-v</code> :  打印当前 react-native-cli 的版本和 react native 的依赖关系</li>
+<li><code>init</code> ： 创建一个新工程并且执行 npm install </li>
+<li><code>--verbose</code>: <code>init</code> 时添加的参数，打印<code>init</code>时的参数</li>
+<li>-<code>-template</code>：用到的模板的名称</li>
+<li><code>--version</code> ： 会覆盖默认（最新版本）安装的 react-native 的版本。 也就是如果要创建指定版本的，需要加上这个参数</li>
+</ul>
+<p>OK， 各个变量的含义我们都弄清楚了，下面让我们继续探究~~</p>
+<p><strong>2.</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"> switch (commands[0]) &#123;</span><br><span class="line">    case &apos;init&apos;:</span><br><span class="line">      if (!commands[1]) &#123;</span><br><span class="line">        console.error(&apos;Usage: react-native init &lt;ProjectName&gt; [--verbose]&apos;);</span><br><span class="line">        process.exit(1);</span><br><span class="line">      &#125; else &#123;</span><br><span class="line">        init(commands[1], options);</span><br><span class="line">      &#125;</span><br><span class="line">      break;</span><br><span class="line">    default:</span><br><span class="line">     //...代码省略</span><br><span class="line">      break;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这之前 116  行 定义了 commands 这个变量，取值的结果是解析的参数，应该是 <code>_ [ &#39;init &#39;, &#39;yx_rnDEmo&#39;]</code>,所以会走switch 的第一个选项，去执行  <code>init(commands[1], options)</code> 方法,参数为 ‘yx_rnDemo’ 和 options 变量。</p>
+<p><strong>3.</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * @param name Project name, e.g. &apos;AwesomeApp&apos;.</span><br><span class="line"> * @param options.verbose If true, will run &apos;npm install&apos; in verbose mode (for debugging).</span><br><span class="line"> * @param options.version Version of React Native to install, e.g. &apos;0.38.0&apos;.</span><br><span class="line"> * @param options.npm If true, always use the npm command line client,</span><br><span class="line"> *                       don&apos;t use yarn even if available.</span><br><span class="line"> */</span><br><span class="line">function init(name, options) &#123;</span><br><span class="line">  validateProjectName(name);</span><br><span class="line"></span><br><span class="line">  if (fs.existsSync(name)) &#123;</span><br><span class="line">    createAfterConfirmation(name, options);</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    createProject(name, options);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>很简单，先去判断我们起的工程名称是否符合命名规范，并且判断是否存在。所以下面直接看 <code>createProject(name, options)</code> 方法</p>
+<p><strong>4.</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">function createProject(name, options) &#123;</span><br><span class="line">   //....代码省略</span><br><span class="line">  run(root, projectName, options);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个方法里主要是去进行创建工程文件夹和 package.json 文件的操作，然后后续行动在<code>run(root, projectName, options)</code> 函数中</p>
+<p><strong>5.</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">function run(root, projectName, options) &#123;</span><br><span class="line">  var rnPackage = options.version; // e.g. &apos;0.38&apos; or &apos;/path/to/archive.tgz&apos;</span><br><span class="line"></span><br><span class="line">  console.log(&apos;Installing &apos; + getInstallPackage(rnPackage) + &apos;...&apos;);</span><br><span class="line">   //...代码省略</span><br><span class="line">  installCommand =  &apos;npm install --save --save-exact &apos; + getInstallPackage(rnPackage);</span><br><span class="line">  if (options.verbose) &#123;</span><br><span class="line">      installCommand += &apos; --verbose&apos;;</span><br><span class="line">   &#125;</span><br><span class="line">   //...代码省略</span><br><span class="line">   try &#123;</span><br><span class="line">    execSync(installCommand, &#123;stdio: &apos;inherit&apos;&#125;);</span><br><span class="line">    &#125; catch (err) &#123;</span><br><span class="line">      //... 代码省略</span><br><span class="line">  &#125;</span><br><span class="line">  cli.init(root, projectName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>其中这个 <code>rnPackage</code> 就是解析的 version 参数 ，所以，对于我的第一次使用的命令：<code>react-native init yx_rnDemo --version0.47.2</code> 来说，解析工具并没有找到 key 为 version 的参数，所以第一次命令的 <code>rnPackage</code>的值应该是空的，输入正确后就是 0.47.2 了。<br>然后看 <code>installCommand</code>  这个变量，就是最终执行的命令。其中一个参数是需要到<code>getInstallPackage(rnPackage)</code>去确定一下是什么。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">function getInstallPackage(rnPackage) &#123;</span><br><span class="line">  var packageToInstall = &apos;react-native&apos;;</span><br><span class="line">  var isValidSemver = semver.valid(rnPackage);</span><br><span class="line">  if (isValidSemver) &#123;</span><br><span class="line">    packageToInstall += &apos;@&apos; + isValidSemver;</span><br><span class="line">  &#125; else if (rnPackage) &#123;</span><br><span class="line">    // for tar.gz or alternative paths</span><br><span class="line">    packageToInstall = rnPackage;</span><br><span class="line">  &#125;</span><br><span class="line">  return packageToInstall;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>OMG！ 看到上面的代码 激不激动，终于真相大白了！！<br>按照我的第一次错误的写法，这个 rnPackage 是空，然后</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var isValidSemver = semver.valid(rnPackage);</span><br></pre></td></tr></table></figure>
+<p>这一行代码的含义是进行一个版本语义化规范的检查，就是你创建的版本号必须符合 <a href="https://juejin.im/post/5ad413ba6fb9a028b5485866" target="_blank" rel="noopener">semver语义化规范</a>，也就是 <strong>x.y.z</strong> 的格式，比如 0.47.2 ，然而我现在传的空，肯定是不符合规范的，果断返回 false ，所以该方法会返回 “react-native”, 默认会安装最新版。<br>而我后来正确的写法，是符合规范的，最终该方法会返回  “<a href="mailto:react-native@0.47.2" target="_blank" rel="noopener">react-native@0.47.2</a>“ ! 然后就会下载指定的版本了。</p>
+<p>最后我们这边可以验证下，输出的 log 参数是不是我们在代码中看到的。</p>
+<p>上图：<br><img src="https://img-blog.csdnimg.cn/20181103222931312.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNzAzODc3,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20181103222943285.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNzAzODc3,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>果然如此~~</p>
+<p>然后终于理解了，<a href="https://reactnative.cn/docs/getting-started/" target="_blank" rel="noopener">react-native 中文网</a> 中提示如果创建指定版本，<strong>版本号必须满足两位小数点</strong> 这句话是为什么了。<br><img src="https://img-blog.csdnimg.cn/20181103223149178.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNzAzODc3,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="step3-总结-amp-填坑"><a href="#step3-总结-amp-填坑" class="headerlink" title="step3. 总结 &amp; 填坑"></a>step3. 总结 &amp; 填坑</h4><p>所以说了那么多，如果想在 init 时候指定版本号，非常简单,，就是官网指出的：</p>
+<blockquote>
+<p>react-native init MyApp –version 0.44.3</p>
+</blockquote>
+<p>但必须注意检查两点（估计也就我这么粗心的人会犯吧）：</p>
+<p><strong>1.<code>--version</code> 一定要加空格，千万不要写成 <code>--version0.44.3</code></strong></p>
+<p> <strong>2.版本号一定要两位小数点，必须符合  <a href="https://juejin.im/post/5ad413ba6fb9a028b5485866" target="_blank" rel="noopener">semver语义化规范</a></strong></p>
+<h3 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h3><blockquote>
+<p><a href="https://github.com/facebook/react-native/blob/83c7303a193fd0c998539be641ba2f8423cddd89/react-native-cli/index.js" target="_blank" rel="noopener">https://github.com/facebook/react-native</a><br><a href="http://nodejs.cn/api/child_process.html" target="_blank" rel="noopener">http://nodejs.cn/api/child_process.html</a><br><a href="http://www.runoob.com/nodejs/nodejs-path-module.html" target="_blank" rel="noopener">http://www.runoob.com/nodejs/nodejs-path-module.html</a><br><a href="http://nodejs.cn/api/fs.html#fs_file_system" target="_blank" rel="noopener">http://nodejs.cn/api/fs.html#fs_file_system</a><br><a href="https://www.jianshu.com/p/231b931ab389" target="_blank" rel="noopener">https://www.jianshu.com/p/231b931ab389</a></p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+<div>
+  
+    ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">------------- 本文结束 <i class="fa fa-paw"></i> 感谢您的阅读 -------------</div>
+    
+</div>
+
+  
+</div>
+<div>
+      
+        
+      
+</div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/24/android --巧用 flexboxLayout 布局/" rel="next" title="android --巧用 flexboxLayout 布局">
+                <i class="fa fa-chevron-left"></i> android --巧用 flexboxLayout 布局
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zOTcwMS8xNjIyOA=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://avatars0.githubusercontent.com/u/25956745?s=400&u=3b875396982ce81f05ad70778ceee4e3daf8d909&v=4"
+                alt="xiaxiayang" />
+            
+              <p class="site-author-name" itemprop="name">xiaxiayang</p>
+              <p class="site-description motion-element" itemprop="description">万事起于乎微</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前-言"><span class="nav-number">1.</span> <span class="nav-text">前 言</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#step1-我竟然偷偷的给自己挖了个坑？"><span class="nav-number">1.1.</span> <span class="nav-text">step1. 我竟然偷偷的给自己挖了个坑？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#step2-一步步分析坑是如何产生的"><span class="nav-number">1.2.</span> <span class="nav-text">step2. 一步步分析坑是如何产生的</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#step3-总结-amp-填坑"><span class="nav-number">1.3.</span> <span class="nav-text">step3. 总结 &amp; 填坑</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考文章"><span class="nav-number">2.</span> <span class="nav-text">参考文章</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xiaxiayang</span>
+
+ 
+ 
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_pv">
+  本站访客数:<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+  
+</div>
+
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+-->
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("ByyCi7vrXdGjsa6CpXHlJEvk-gzGzoHsz", "g9aOj0XwnjgbqfEbmmyuBw2O");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
