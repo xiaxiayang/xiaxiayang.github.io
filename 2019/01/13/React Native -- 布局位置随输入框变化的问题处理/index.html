@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言在之前项目的开发过程中，下图这样的需求很是常见：当键盘弹起时，某个布局正好在键盘之上，当键盘消失时，这个布局又回到页面最底部。 今天来讨论的就是这个功能我用过的方法及踩过的坑。 方案1首先我们观察到下面的一块布局（以下简称 “A” 布局）是随着键盘的弹起和消失来改变位置的，并且距离屏幕的底部正好是键盘的高度。所以，第一个思路，设置 A 布局的位置方式为绝对定位，并且是计算距离父布局底部的位置为">
+<meta name="keywords" content="android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="React Native -- 布局位置随输入框变化的问题处理">
+<meta property="og:url" content="https://xiaxiayang.github.io/2019/01/13/React Native -- 布局位置随输入框变化的问题处理/index.html">
+<meta property="og:site_name" content="夏霂熠雨">
+<meta property="og:description" content="前言在之前项目的开发过程中，下图这样的需求很是常见：当键盘弹起时，某个布局正好在键盘之上，当键盘消失时，这个布局又回到页面最底部。 今天来讨论的就是这个功能我用过的方法及踩过的坑。 方案1首先我们观察到下面的一块布局（以下简称 “A” 布局）是随着键盘的弹起和消失来改变位置的，并且距离屏幕的底部正好是键盘的高度。所以，第一个思路，设置 A 布局的位置方式为绝对定位，并且是计算距离父布局底部的位置为">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.loli.net/2019/01/13/5c3b39da60dbd.gif">
+<meta property="og:image" content="https://i.loli.net/2019/01/13/5c3b39da5c6cc.gif">
+<meta property="og:image" content="https://i.loli.net/2019/01/13/5c3b39d915319.gif">
+<meta property="og:image" content="https://i.loli.net/2019/01/13/5c3b39da44851.gif">
+<meta property="og:image" content="https://i.loli.net/2019/01/13/5c3b39d908c6d.png">
+<meta property="og:image" content="https://i.loli.net/2019/01/13/5c3b39da53736.gif">
+<meta property="og:updated_time" content="2019-01-13T13:16:40.944Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="React Native -- 布局位置随输入框变化的问题处理">
+<meta name="twitter:description" content="前言在之前项目的开发过程中，下图这样的需求很是常见：当键盘弹起时，某个布局正好在键盘之上，当键盘消失时，这个布局又回到页面最底部。 今天来讨论的就是这个功能我用过的方法及踩过的坑。 方案1首先我们观察到下面的一块布局（以下简称 “A” 布局）是随着键盘的弹起和消失来改变位置的，并且距离屏幕的底部正好是键盘的高度。所以，第一个思路，设置 A 布局的位置方式为绝对定位，并且是计算距离父布局底部的位置为">
+<meta name="twitter:image" content="https://i.loli.net/2019/01/13/5c3b39da60dbd.gif">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://xiaxiayang.github.io/2019/01/13/React Native -- 布局位置随输入框变化的问题处理/"/>
+
+
+
+
+
+  <title>React Native -- 布局位置随输入框变化的问题处理 | 夏霂熠雨</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+<a href="https://github.com/xiaxiayang" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; left: 0; transform: scale(-1, 1);" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style></a>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">夏霂熠雨</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://xiaxiayang.github.io/2019/01/13/React Native -- 布局位置随输入框变化的问题处理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xiaxiayang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/25956745?s=400&u=3b875396982ce81f05ad70778ceee4e3daf8d909&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏霂熠雨">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">React Native -- 布局位置随输入框变化的问题处理</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-13T21:10:09+08:00">
+                2019-01-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/react-native/" itemprop="url" rel="index">
+                    <span itemprop="name">react native</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/01/13/React Native -- 布局位置随输入框变化的问题处理/" class="leancloud_visitors" data-flag-title="React Native -- 布局位置随输入框变化的问题处理">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+				 <span>℃</span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在之前项目的开发过程中，下图这样的需求很是常见：<br><img src="https://i.loli.net/2019/01/13/5c3b39da60dbd.gif" alt="1.gif"><br>当键盘弹起时，某个布局正好在键盘之上，当键盘消失时，这个布局又回到页面最底部。</p>
+<p>今天来讨论的就是这个功能我用过的方法及踩过的坑。</p>
+<h3 id="方案1"><a href="#方案1" class="headerlink" title="方案1"></a>方案1</h3><p>首先我们观察到下面的一块布局（以下简称 “A” 布局）是随着键盘的弹起和消失来改变位置的，并且距离屏幕的底部正好是键盘的高度。<br>所以，第一个思路，设置 A 布局的位置方式为绝对定位，并且是计算距离父布局底部的位置为键盘的高度。<br>代码中定义一个展示键盘高度的变量 keyboardHeight ，然后设置键盘显示与消失的事件监听，并给 keyboardHeight  变量赋值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">componentDidMount()&#123;</span><br><span class="line">    this.keyboardDidShow = Keyboard.addListener(&apos;keyboardDidShow&apos;, this.keyboardShow.bind(this));</span><br><span class="line">    this.keyboardDidHide = Keyboard.addListener(&apos;keyboardDidHide&apos;, this.keyboardHide.bind(this));</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> keyboardShow(e)&#123;</span><br><span class="line">    this.setState(&#123;</span><br><span class="line">        keyboardHeight:e.endCoordinates.height</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br><span class="line">keyboardHide()&#123;</span><br><span class="line">     this.setState(&#123;</span><br><span class="line">        keyboardHeight:0</span><br><span class="line">      &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后在 render 方法中设置 A 布局的样式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">render() &#123;</span><br><span class="line">         return (</span><br><span class="line">         &lt;View style = &#123;&#123;flex:1&#125;&#125;&gt;</span><br><span class="line">            &lt;TextInput</span><br><span class="line">                 style=&#123;&#123;height: 140, borderColor: &apos;#999&apos;, borderWidth: 1,margin:15&#125;&#125;</span><br><span class="line">                 onChangeText=&#123;(text) =&gt; this.setState(&#123;text&#125;)&#125;</span><br><span class="line">                 placeholder=&#123;&apos;随便说点什么吧&apos;&#125;</span><br><span class="line">                 textAlignVertical = &#123;&apos;top&apos;&#125;</span><br><span class="line">             /&gt;</span><br><span class="line"></span><br><span class="line">             &lt;View style = &#123;[styles.bottomView,&#123;bottom:this.state.keyboardHeight&#125;]&#125;&gt;</span><br><span class="line">                &lt;TouchableOpacity onPress = &#123;()=&gt;&#123;alert(1)&#125;&#125;&gt;</span><br><span class="line">                  &lt;Image style = &#123;&#123;width:26,height:26,marginLeft:15&#125;&#125; resizeMode =&#123;&apos;contain&apos;&#125;source = &#123;require(&apos;../img/keyBoard.png&apos;)&#125;/&gt;</span><br><span class="line">                &lt;/TouchableOpacity&gt;</span><br><span class="line">                &lt;TouchableOpacity onPress = &#123;()=&gt;&#123;alert(1)&#125;&#125;&gt;</span><br><span class="line">                  &lt;Image style = &#123;&#123;width:26,height:26,marginRight:15&#125;&#125; resizeMode =&#123;&apos;contain&apos;&#125;source = &#123;require(&apos;../img/emoji.png&apos;)&#125;/&gt;</span><br><span class="line">                &lt;/TouchableOpacity&gt;</span><br><span class="line">             &lt;/View&gt;</span><br><span class="line">         &lt;/View&gt;</span><br><span class="line"></span><br><span class="line">         );</span><br><span class="line">       &#125;</span><br><span class="line">       </span><br><span class="line">     const styles = StyleSheet.create(&#123;</span><br><span class="line"></span><br><span class="line">        bottomView:&#123;</span><br><span class="line">           position:&apos;absolute&apos;,</span><br><span class="line">           flexDirection:&apos;row&apos;,</span><br><span class="line">           height:48,width:&apos;100%&apos;,</span><br><span class="line">           backgroundColor:&apos;#DD4F43&apos;,</span><br><span class="line">           justifyContent:&apos;space-between&apos;,</span><br><span class="line">           alignItems:&apos;center&apos;</span><br><span class="line">         &#125;</span><br><span class="line">       &#125;);</span><br></pre></td></tr></table></figure>
+<p>然后，我们来看一下效果：<br><img src="https://i.loli.net/2019/01/13/5c3b39da5c6cc.gif" alt="2.gif"></p>
+<p>咦，好像翻车了。<br>可以看到当键盘没有弹出的时候是好的，但是当键盘弹出后 A 布局就不见了。那这又有两种情况，一种是 A 布局在正确位置的上方，超出屏幕了，一种是在正确位置的下方，被键盘遮挡没弹起来。<br>那我们来将 A 布局的位置改为  <code>keyboardHeight -150</code></p>
+<p> 看下效果：<br><img src="https://i.loli.net/2019/01/13/5c3b39d915319.gif" alt="3.gif"><br>嗯，A 布局出现了，并且是在键盘的上方。由此可见我们的第一个猜想是对的。<br>那我们不妨再大胆做个猜想，A 布局偏离正确位置的高度会不会就是一个键盘的高度呢？如果是这样的话，那我们 A 布局的 bottom 就应该为 <code>keyboardHeight - keyboardHeight</code>  即为 0！</p>
+<p>改下代码，然后来看下效果<br><img src="https://i.loli.net/2019/01/13/5c3b39da44851.gif" alt="4.gif"><br>貌似完美！ 也就是在 android 上也不需要去计算键盘的高度，布局直接在键盘之上？这个原理我还不清楚，但感觉和输入框与软键盘之间的恩怨有联系。<br>然后我们再看下在 ios 上的表现，嗯，这里没有测试机，就不贴图了。但事实证明会有个问题，在 ios 上如果这样设置当键盘显示的时候，A 布局不会弹起来，而是还在屏幕的底部。所以，ios  还是要计算键盘的高度。</p>
+<p>所以，最后适配如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;View style = &#123;[styles.bottomView,&#123;bottom:Platform.OS == &apos;ios&apos;? this.state.keyboardHeight:0&#125;]&#125;&gt;</span><br><span class="line">               &lt;TouchableOpacity onPress = &#123;()=&gt;&#123;alert(1)&#125;&#125;&gt;</span><br><span class="line">                 &lt;Image style = &#123;&#123;width:26,height:26,marginLeft:15&#125;&#125; resizeMode =&#123;&apos;contain&apos;&#125;source = &#123;require(&apos;../img/keyBoard.png&apos;)&#125;/&gt;</span><br><span class="line">               &lt;/TouchableOpacity&gt;</span><br><span class="line">               &lt;TouchableOpacity onPress = &#123;()=&gt;&#123;alert(1)&#125;&#125;&gt;</span><br><span class="line">                 &lt;Image style = &#123;&#123;width:26,height:26,marginRight:15&#125;&#125; resizeMode =&#123;&apos;contain&apos;&#125;source = &#123;require(&apos;../img/emoji.png&apos;)&#125;/&gt;</span><br><span class="line">               &lt;/TouchableOpacity&gt;</span><br><span class="line">            &lt;/View&gt;</span><br></pre></td></tr></table></figure>
+<p>在这种方案实行了俩星期后，测试就提出来严重的兼容性问题：</p>
+<ul>
+<li>在某些 android 手机上（如魅蓝），键盘弹起时，A 布局会距离键盘上方大约一个键盘的高度，即弹的太上了</li>
+<li>在某些 android 手机 或者 iPhoneX 上，键盘弹起时 A 布局弹不出来</li>
+</ul>
+<p>这两个问题都是偶现的，但在某些机型上的偶现率达 50%<br>所以，看来方案一是有问题。<br>但问题究竟出在哪里，我没弄明白，但敢肯定还是和输入框与软键盘的适配有关，曾经尝试设置 activity 的 softnput 参数，未果。</p>
+<h3 id="方案2"><a href="#方案2" class="headerlink" title="方案2"></a>方案2</h3><p>那我们就来换种思路，方案一我们是采用基于 bottom 的定位。但也许由于软键盘与输入框的特殊关系，这个 bottom 的值在不同机型上表现不同。那我们能否改为基于 top 定位呢。<br>分析一下，如果是基于 top 定位的情况，值应该怎么算，来看一下分析图：<br><img src="https://i.loli.net/2019/01/13/5c3b39d908c6d.png" alt="5.png"></p>
+<ul>
+<li>当键盘没有弹起的时候，A 布局距离父布局的顶部的距离是 <code>h- bottomHeight</code>，即父布局高度减去 A 布局自身高度。</li>
+<li><p>当键盘弹起时，A 布局距离父布局的顶部的距离是 <code>h- bottomHeight-keyboardHeight</code>，即多减掉键盘的高度。</p>
+<p>所以最终计算方式为：父布局的高度 - A 布局自身的高度 - 键盘的高度</p>
+<p>代码中，我们首先需要计算一下父布局的高度，通过 onLayout 方法计算出。然后设置 A 布局的 top 属性值</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">_onLayout(event) &#123;</span><br><span class="line">       //获取根View的宽高，以及左上角的坐标值</span><br><span class="line">        this.setState(&#123;</span><br><span class="line">           layoutHeight : 1</span><br><span class="line">        &#125;)</span><br><span class="line">     &#125;</span><br><span class="line">      render() &#123;</span><br><span class="line">         return (</span><br><span class="line">         &lt;View style = &#123;&#123;flex:1&#125;&#125;  onLayout=&#123;()=&gt;&#123;this._onLayout&#125;&#125;&gt;</span><br><span class="line">            &lt;TextInput</span><br><span class="line">                 style=&#123;&#123;height: 140, borderColor: &apos;#999&apos;, borderWidth: 1,margin:15&#125;&#125;</span><br><span class="line">                 onChangeText=&#123;(text) =&gt; this.setState(&#123;text&#125;)&#125;</span><br><span class="line">                 placeholder=&#123;&apos;随便说点什么吧&apos;&#125;</span><br><span class="line">                 textAlignVertical = &#123;&apos;top&apos;&#125;</span><br><span class="line">             /&gt;</span><br><span class="line"></span><br><span class="line">             &lt;View style = &#123;[styles.bottomView,&#123;top:520-48-this.state.keyboardHeight&#125;]&#125;&gt;</span><br><span class="line">                &lt;TouchableOpacity onPress = &#123;()=&gt;&#123;alert(1)&#125;&#125;&gt;</span><br><span class="line">                  &lt;Image style = &#123;&#123;width:26,height:26,marginLeft:15&#125;&#125; resizeMode =&#123;&apos;contain&apos;&#125;source = &#123;require(&apos;../img/keyBoard.png&apos;)&#125;/&gt;</span><br><span class="line">                &lt;/TouchableOpacity&gt;</span><br><span class="line">                &lt;TouchableOpacity onPress = &#123;()=&gt;&#123;alert(1)&#125;&#125;&gt;</span><br><span class="line">                  &lt;Image style = &#123;&#123;width:26,height:26,marginRight:15&#125;&#125; resizeMode =&#123;&apos;contain&apos;&#125;source = &#123;require(&apos;../img/emoji.png&apos;)&#125;/&gt;</span><br><span class="line">                &lt;/TouchableOpacity&gt;</span><br><span class="line">             &lt;/View&gt;</span><br><span class="line">         &lt;/View&gt;</span><br><span class="line"></span><br><span class="line">         );</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+<p>刷新一下，看一下效果：<br><img src="https://i.loli.net/2019/01/13/5c3b39da53736.gif" alt="6.gif"></p>
+<p>貌似没什么毛病，通过在其他机型和 ios 上测试，目前没有发现问题。</p>
+<p>所以第二种方案可行。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>以后遇到这种需求，最好要避免根据 bottom 来定位，可以换种思路，根据 top 来定位。</p>
+
+      
+    </div>
+    
+    
+    
+<div>
+  
+    ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">------------- 本文结束 <i class="fa fa-paw"></i> 感谢您的阅读 -------------</div>
+    
+</div>
+
+  
+</div>
+<div>
+      
+        
+      
+</div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/13/android -- String 格式化使用示例/" rel="next" title="android -- String 格式化使用示例">
+                <i class="fa fa-chevron-left"></i> android -- String 格式化使用示例
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/13/杂记/" rel="prev" title="杂记">
+                杂记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zOTcwMS8xNjIyOA=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://avatars0.githubusercontent.com/u/25956745?s=400&u=3b875396982ce81f05ad70778ceee4e3daf8d909&v=4"
+                alt="xiaxiayang" />
+            
+              <p class="site-author-name" itemprop="name">xiaxiayang</p>
+              <p class="site-description motion-element" itemprop="description">万事起于乎微</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方案1"><span class="nav-number">2.</span> <span class="nav-text">方案1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方案2"><span class="nav-number">3.</span> <span class="nav-text">方案2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xiaxiayang</span>
+
+ 
+ 
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_pv">
+  本站访客数:<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+  
+</div>
+
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+-->
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("ByyCi7vrXdGjsa6CpXHlJEvk-gzGzoHsz", "g9aOj0XwnjgbqfEbmmyuBw2O");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
