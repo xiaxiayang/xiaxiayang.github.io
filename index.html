@@ -253,6 +253,201 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://xiaxiayang.github.io/2019/02/20/RecycleView 系列（3）-- 利用 ItemDecoration 实现时光轴（物流时间）样式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xiaxiayang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/25956745?s=400&u=3b875396982ce81f05ad70778ceee4e3daf8d909&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏霂熠雨">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/02/20/RecycleView 系列（3）-- 利用 ItemDecoration 实现时光轴（物流时间）样式/" itemprop="url">RecycleView 系列（3）-- 利用 ItemDecoration 实现时光轴（物流时间）样式类</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-20T19:40:34+08:00">
+                2019-02-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/02/20/RecycleView 系列（3）-- 利用 ItemDecoration 实现时光轴（物流时间）样式/" class="leancloud_visitors" data-flag-title="RecycleView 系列（3）-- 利用 ItemDecoration 实现时光轴（物流时间）样式类">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+				 <span>℃</span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p><a href="https://blog.csdn.net/qq_33703877/article/details/86499567" target="_blank" rel="noopener">上一篇</a>文章中详细介绍了 ItemDecoration 这个了类，了解了 RecycleView 实现分割线的原理。</p>
+<p>下面我们来进入实战篇，首先实现一个比较常见的时光轴(物流详情)的效果。</p>
+<h3 id="一、-效果分析"><a href="#一、-效果分析" class="headerlink" title="一、 效果分析"></a>一、 效果分析</h3><p>首先我来分析一下常见的一种物流详情效果图：<br><img src="https://i.loli.net/2019/02/20/5c6d3d302918a.jpg" alt="1.jpg"><br>分析可知，常规的 item 布局实现无法满足此需求，因为我们在 layout 中不知道 item 的高度为多少，中间那条竖线不容易实现。<br>有了上节对 ItemDecoration 的了解，我们可以将左边布局（蓝色框以左) 当做分割线来处理。</p>
+<p>其中需要注意的有：</p>
+<ol>
+<li>红色框内表示整个 item 内容</li>
+<li>蓝色框内 item 在 <strong>布局中</strong> 固定的内容</li>
+<li>绿色框内小图标的绘制</li>
+<li>黄色框内时间的绘制</li>
+<li>灰色框内竖线的绘制</li>
+</ol>
+<h4 id="二、功能实现"><a href="#二、功能实现" class="headerlink" title="二、功能实现"></a>二、功能实现</h4><p>既然知道了思路，根据上节的步骤按部就班的就好。</p>
+<p>1.首先模拟下数据结构，定义好 dataBean，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">public class LogisticsInfoBean  implements Serializable &#123;</span><br><span class="line">    /**</span><br><span class="line">     * 物流信息</span><br><span class="line">     */</span><br><span class="line">    private String message;</span><br><span class="line">    /**</span><br><span class="line">     * 当前物流状态</span><br><span class="line">     */</span><br><span class="line">    private LogisticsStatus status;</span><br><span class="line">    /**</span><br><span class="line">     * 日期</span><br><span class="line">     */</span><br><span class="line">    private String date;</span><br><span class="line">    /**</span><br><span class="line">     * 时间</span><br><span class="line">     */</span><br><span class="line">    private String time;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">public enum LogisticsStatus &#123;</span><br><span class="line">    /**</span><br><span class="line">     *  一般提示语</span><br><span class="line">     */</span><br><span class="line">    TIPS,</span><br><span class="line">    /**</span><br><span class="line">     * 已下单</span><br><span class="line">     */</span><br><span class="line">    ORDERED,</span><br><span class="line">    /**</span><br><span class="line">     * 备货中</span><br><span class="line">     */</span><br><span class="line">    STOCK_UP ,</span><br><span class="line">    /**</span><br><span class="line">     * 已发货</span><br><span class="line">     */</span><br><span class="line">    DELIVERED,</span><br><span class="line">    /**</span><br><span class="line">     * 运输中</span><br><span class="line">     */</span><br><span class="line">    TRANSPORTING,</span><br><span class="line">    /**</span><br><span class="line">     * 已收货</span><br><span class="line">     */</span><br><span class="line">    RECEIVING</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>2.设置 <code>getItemOffsets()</code> </p>
+<p>因为我们作为分割线的部分是蓝色框以左，所以我们需要设置 item 左边 left 的边距，假设预留 120 像素的边距。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 设置 item  lef他方向的偏移量</span><br><span class="line"> */</span><br><span class="line">private int leftOffset = 120;</span><br><span class="line">   </span><br><span class="line">  @Override</span><br><span class="line">public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) &#123;</span><br><span class="line">    super.getItemOffsets(outRect, view, parent, state);</span><br><span class="line">    //设置item 左边流出 leftOffset 的边距</span><br><span class="line">    outRect.left = leftOffset;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>通过 <code>onDraw()</code> 方法绘制左边分割线内的内容</li>
+</ol>
+<p>绘制是主要的部分，而  <code>onDraw()</code> 方法 作用于 RecycleView, 所以我们需要遍历 item ，计算绘制内容的坐标，<br>然后通过 canvas 的 draw 方法进行绘制。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">   * 画的小圆点的半径</span><br><span class="line">   */</span><br><span class="line">  private int circleRadius = 10;</span><br><span class="line">  /**</span><br><span class="line">   * 画的小图标的宽度</span><br><span class="line">   */</span><br><span class="line">  private int iconWidth = 50;</span><br><span class="line">  private Context context;</span><br><span class="line">  private int padding  = 24;</span><br><span class="line">  @Override</span><br><span class="line">  public void onDraw(@NonNull Canvas canvas, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) &#123;</span><br><span class="line">      Log.d(TAG,&quot;----onDraw---&quot;);</span><br><span class="line">      canvas.save();</span><br><span class="line">      //先画分割线整体背景色</span><br><span class="line">      canvas.drawColor(context.getResources().getColor(R.color.white));</span><br><span class="line">      final int childCount = parent.getChildCount();</span><br><span class="line">      //遍历 </span><br><span class="line">      for (int i = 0; i &lt; childCount; i++) &#123;</span><br><span class="line">          final View child = parent.getChildAt(i);</span><br><span class="line">          //1.先画 1 px 的图标上半部分的竖线</span><br><span class="line">          int startX = leftOffset-30;</span><br><span class="line">          int startY = child.getTop();</span><br><span class="line">          int lineStopY = startY+padding;</span><br><span class="line">          paint.setColor(context.getResources().getColor(R.color.gray_deep));</span><br><span class="line">          canvas.drawLine(startX,startY,startX,lineStopY,paint);</span><br><span class="line">          //2.画图形</span><br><span class="line">          int positon = parent.getChildAdapterPosition(child);</span><br><span class="line">          LogisticsInfoBean bean = dataBeanList.get(positon);</span><br><span class="line">          Rect dst = new Rect(startX-iconWidth/2,lineStopY,startX+iconWidth/2,lineStopY+iconWidth);</span><br><span class="line">          //根据不同状态画不同图形</span><br><span class="line">          switch (bean.getStatus())&#123;</span><br><span class="line">              case TIPS:</span><br><span class="line">                  canvas.drawCircle(startX,lineStopY+circleRadius,circleRadius,paint);</span><br><span class="line">                  break;</span><br><span class="line">              case ORDERED:</span><br><span class="line">                  canvas.drawBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.ic_order),null,dst,null);</span><br><span class="line">                  break;</span><br><span class="line">              case STOCK_UP:</span><br><span class="line">                  canvas.drawBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.ic_stockup),null,dst,null);</span><br><span class="line">                  break;</span><br><span class="line">              case DELIVERED:</span><br><span class="line">                  canvas.drawBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.ic_diliver),null,dst,null);</span><br><span class="line">                  break;</span><br><span class="line">              case TRANSPORTING:</span><br><span class="line">                  canvas.drawBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.ic_transporting),null,dst,null);</span><br><span class="line">                  break;</span><br><span class="line">              case RECEIVING:</span><br><span class="line">                  canvas.drawBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.ic_receive),null,dst,null);</span><br><span class="line">                  break;</span><br><span class="line">              default:</span><br><span class="line">                  canvas.drawCircle(startX,lineStopY+circleRadius,circleRadius,paint);</span><br><span class="line">                  break;</span><br><span class="line">          &#125;</span><br><span class="line">          //画下半部分竖线</span><br><span class="line">          if (positon != dataBeanList.size() -1)&#123;</span><br><span class="line">              if (bean.getStatus() == LogisticsStatus.TIPS)&#123;</span><br><span class="line">                  canvas.drawLine(startX,lineStopY+2*circleRadius,startX,child.getBottom(),paint);</span><br><span class="line">              &#125;else &#123;</span><br><span class="line">                  canvas.drawLine(startX,lineStopY+iconWidth,startX,child.getBottom(),paint);</span><br><span class="line">              &#125;</span><br><span class="line">          &#125;</span><br><span class="line">          //3.画日期</span><br><span class="line">          canvas.drawText(bean.getDate(),startX-iconWidth/2-10,lineStopY+iconWidth/2,paint);</span><br><span class="line">          canvas.drawText(bean.getTime(),startX-iconWidth/2-10,lineStopY+iconWidth/2+20,paint);</span><br><span class="line"></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      canvas.restore();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>4.设置数据源</p>
+<p>让我们来造点假数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">   protected void initData() &#123;</span><br><span class="line">       dataBeanList.add(new LogisticsInfoBean(&quot;[收货地址，xxxxxxx]&quot;,LogisticsStatus.RECEIVING,&quot;02-11&quot;,&quot;10:00&quot;));</span><br><span class="line">       dataBeanList.add(new LogisticsInfoBean(&quot;小主，运输中x1&quot;,LogisticsStatus.TRANSPORTING,&quot;02-10&quot;,&quot;12:00&quot;));</span><br><span class="line">       dataBeanList.add(new LogisticsInfoBean(&quot;小主，\n运输中x2&quot;,LogisticsStatus.TRANSPORTING,&quot;02-10&quot;,&quot;12:10&quot;));</span><br><span class="line">       dataBeanList.add(new LogisticsInfoBean(&quot;小主，\n\n运输中x3&quot;,LogisticsStatus.TRANSPORTING,&quot;02-10&quot;,&quot;12:20&quot;));</span><br><span class="line">       dataBeanList.add(new LogisticsInfoBean(&quot;小主，\n运输中x4&quot;,LogisticsStatus.TRANSPORTING,&quot;02-10&quot;,&quot;12:30&quot;));</span><br><span class="line">       dataBeanList.add(new LogisticsInfoBean(&quot;小主，已发货&quot;,LogisticsStatus.DELIVERED,&quot;02-10&quot;,&quot;10:00&quot;));</span><br><span class="line">       dataBeanList.add(new LogisticsInfoBean(&quot;小主，备货中&quot;,LogisticsStatus.STOCK_UP,&quot;02-09&quot;,&quot;12:00&quot;));</span><br><span class="line">       dataBeanList.add(new LogisticsInfoBean(&quot;订单支付成功，系统正在处理&quot;,LogisticsStatus.ORDERED,&quot;02-09&quot;,&quot;10:10&quot;));</span><br><span class="line">       dataBeanList.add(new LogisticsInfoBean(&quot;订单创建成功，等待支付&quot;,LogisticsStatus.TIPS,&quot;02-09&quot;,&quot;10:00&quot;));</span><br><span class="line"></span><br><span class="line">       adapter.notifyDataSetChanged();</span><br><span class="line"></span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>其他一些设置这里就不在说了，然后运行看一下效果：<br><img src="https://i.loli.net/2019/02/20/5c6d3d300cb1a.jpg" alt="2.jpg"><br>所以，实现起来也很简单有没有。</p>
+<p>完整代码看这里：<a href="https://github.com/xiaxiayang/AdvancedPractice" target="_blank" rel="noopener">demo 传送门</a></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>关于分割线的实现，不管是什么样式的，按照之前说的步骤一步步来就好：</p>
+<ul>
+<li>通过 <code>getItemOffset（）</code> 方法设置 item 的偏移量**</li>
+<li>在 <code>onDraw（）</code>或 <code>onDrawOver（）</code> 方法中完成绘制**</li>
+<li>遍历 item，计算分割线的位置**</li>
+<li>通过 <code>draw（）</code>方法完成绘制**</li>
+</ul>
+<p>其中需要注意的是各个绘制内容坐标的计算。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://blog.csdn.net/carson_ho/article/details/75005994" target="_blank" rel="noopener">Android 自定义View实战系列 ：时间轴</a><br><a href="https://developer.android.com/reference/android/support/v7/widget/RecyclerView.ItemDecoration" target="_blank" rel="noopener">https://developer.android.com/reference/android/support/v7/widget/RecyclerView.ItemDecoration</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+<div>
+  
+</div>
+<div>
+      
+</div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://xiaxiayang.github.io/2019/02/10/RecycleView 系列（2）-- 认识 ItemDecoration 类/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2205,265 +2400,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://xiaxiayang.github.io/2018/09/20/android - layer-list 属性让特殊样式变得简单/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="xiaxiayang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/25956745?s=400&u=3b875396982ce81f05ad70778ceee4e3daf8d909&v=4">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏霂熠雨">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/20/android - layer-list 属性让特殊样式变得简单/" itemprop="url">android - layer-list 属性让特殊样式变得简单</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-20T23:44:26+08:00">
-                2018-09-20
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/android/" itemprop="url" rel="index">
-                    <span itemprop="name">android</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/09/20/android - layer-list 属性让特殊样式变得简单/" class="leancloud_visitors" data-flag-title="android - layer-list 属性让特殊样式变得简单">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-				 <span>℃</span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a><strong>前言</strong></h3><p>在开发中，总是能碰到那种看起来很简单，但是想想又不是一两句代码就好实现的 UI 样式效果。比如前几天在调整 UI 的时候，就遇到过几个下图这样的：</p>
-<p><img src="https://i.loli.net/2018/09/21/5ba50179514b4.png" alt="1]1MPB97(OC8Z@E1WS{T`G7.png"><br><img src="https://i.loli.net/2018/09/21/5ba5017967648.png" alt="8G(NRRT0N6IPC(_EUQ09SOG.png"><br><img src="https://i.loli.net/2018/09/21/5ba50250066ce.png" alt=""></p>
-<p>这几张图里面的输入框的背景图乍一看没有什么，但是在认识 <code>&lt;layer-list&gt;</code> 之前你会怎么实现呢？比如一二两张图的输入框，看起来就只有下面一条线，当输入框没有获取焦点时显示灰色，当输入框获取焦点时显示绿色。而第二张图直接左右各多出来半截。如果是我，我估计第一张图我会用俩控件实现，第二张图直接 UI 出 .9 图（捂脸ing）。</p>
-<p>而现在，我们可以用 <code>&lt;layer-list&gt;</code>这个属性来更优雅的实现这个效果。</p>
-<h3 id="初识-lt-layer-list-gt"><a href="#初识-lt-layer-list-gt" class="headerlink" title="初识 &lt;layer-list&gt;"></a>初识 <code>&lt;layer-list&gt;</code></h3><p><code>&lt;layer-list&gt;</code> 是 android 可绘制对象资源中的一种。<a href="https://developer.android.com/guide/topics/resources/drawable-resource?hl=zh-cn" target="_blank" rel="noopener">文档</a> 中描述：可绘制对象资源是一般概念，是指可在屏幕上绘制的图形，以及可以使用 getDrawable(int) 等 API 检索或者应用到具有 android:drawable 和 android:icon 等属性的其他 XML 资源的图形。有以下几类：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">类别</th>
-<th style="text-align:center">描述</th>
-<th style="text-align:center">创建</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">位图文件</td>
-<td style="text-align:center">位图图形文件（.png、.jpg 或 .gif）</td>
-<td style="text-align:center">BitmapDrawable</td>
-</tr>
-<tr>
-<td style="text-align:center">九宫格文件</td>
-<td style="text-align:center">具有可拉伸区域的 PNG 文件，允许根据内容调整图像大小 (.9.png)</td>
-<td style="text-align:center">BitmapDrawable</td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>图层列表</strong></td>
-<td style="text-align:center"><strong>管理其他可绘制对象阵列的可绘制对象。它们按阵列顺序绘制，因此索引最大的元素绘制在顶部</strong></td>
-<td style="text-align:center"><strong>LayerDrawable</strong></td>
-</tr>
-<tr>
-<td style="text-align:center">状态列表</td>
-<td style="text-align:center">此 XML 文件为不同状态引用不同位图图形（例如，按下按钮时使用不同的图像）</td>
-<td style="text-align:center">StateListDrawable</td>
-</tr>
-<tr>
-<td style="text-align:center">级别列表</td>
-<td style="text-align:center">此 XML 文件用于定义管理大量备选可绘制对象的可绘制对象，每个可绘制对象都分配有最大的备选数量</td>
-<td style="text-align:center">LevelListDrawable</td>
-</tr>
-<tr>
-<td style="text-align:center">转换可绘制对象</td>
-<td style="text-align:center">此 XML 文件用于定义可在两种可绘制对象资源之间交错淡出的可绘制对象</td>
-<td style="text-align:center">TransitionDrawable</td>
-</tr>
-<tr>
-<td style="text-align:center">插入可绘制对象</td>
-<td style="text-align:center">此 XML 文件用于定义以指定距离插入其他可绘制对象的可绘制对象。当视图需要小于视图实际边界的背景可绘制对象时，此类可绘制对象很有用</td>
-<td style="text-align:center">InsetDrawable</td>
-</tr>
-<tr>
-<td style="text-align:center">裁剪可绘制对象</td>
-<td style="text-align:center">此 XML 文件用于定义更改其他可绘制对象大小（根据其当前级别值）的可绘制对象</td>
-<td style="text-align:center">ScaleDrawable</td>
-</tr>
-<tr>
-<td style="text-align:center">形状可绘制对象件</td>
-<td style="text-align:center">此 XML 文件用于定义几何形状（包括颜色和渐变）</td>
-<td style="text-align:center">ShapeDrawable</td>
-</tr>
-</tbody>
-</table>
-<p>这么多种类，里面有几个大家都很熟悉的： 位图文件、九宫格文件 和形状可绘制对象件。就是我们平常用的 drawable、.9 图片 和 shape 文件。其它的种类我还没有接触过。今天说一下其中的<strong>图层列表</strong>。</p>
-<h3 id="lt-layer-list-gt-属性介绍"><a href="#lt-layer-list-gt-属性介绍" class="headerlink" title="&lt;layer-list&gt;属性介绍"></a><code>&lt;layer-list&gt;</code>属性介绍</h3><p>图层列表中的每个可绘制对象按照列表的<strong>顺序绘制</strong>，列表中的最后一个可绘制对象绘于顶部。<br>每个可绘制对象由单一  <code>&lt;layer-list&gt;</code>  元素内的  <code>&lt;item&gt;</code>  元素表示。<br>语法示例：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;layer-list</span><br><span class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot; &gt;</span><br><span class="line">    &lt;item</span><br><span class="line">        android:drawable=&quot;@[package:]drawable/drawable_resource&quot;</span><br><span class="line">        android:id=&quot;@[+][package:]id/resource_name&quot;</span><br><span class="line">        android:top=&quot;dimension&quot;</span><br><span class="line">        android:right=&quot;dimension&quot;</span><br><span class="line">        android:bottom=&quot;dimension&quot;</span><br><span class="line">        android:left=&quot;dimension&quot; /&gt;</span><br><span class="line">&lt;/layer-list&gt;</span><br></pre></td></tr></table></figure>
-<p>这里说一下达到复杂效果常用的几个属性：</p>
-<table>
-<thead>
-<tr>
-<th>属性</th>
-<th>描述  </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>android:top</td>
-<td>顶部偏移（像素）</td>
-</tr>
-<tr>
-<td>android:Left</td>
-<td>左边偏移（像素）</td>
-</tr>
-<tr>
-<td>android:Right</td>
-<td>右边偏移（像素）</td>
-</tr>
-<tr>
-<td>android:Bottom</td>
-<td>底部偏移（像素）</td>
-</tr>
-</tbody>
-</table>
-<p>很简单，有没有。因为就像定义所说，图层列表按顺序绘制，所以我们经常会根据设置顺序加上上下左右的偏移量来达到 ui 效果。</p>
-<h3 id="lt-layer-list-gt-实战"><a href="#lt-layer-list-gt-实战" class="headerlink" title="&lt;layer-list&gt;实战"></a><code>&lt;layer-list&gt;</code>实战</h3><p>首先以第一个输入框获取焦点时效果为例，其实思路很简单，就是最底层是一个绿色矩形，然后上面再盖一个灰色矩形，只不过灰色矩形距离底部 1dp 的高度，所以就达到只有底部一条绿线的效果。所以有了顺序和偏移量，代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;layer-list xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot; &gt;</span><br><span class="line">    &lt;item&gt;</span><br><span class="line">        &lt;shape android:shape=&quot;rectangle&quot; &gt;</span><br><span class="line">            &lt;solid android:color=&quot;#00BE3C&quot; /&gt;</span><br><span class="line">        &lt;/shape&gt;</span><br><span class="line">    &lt;/item&gt;</span><br><span class="line">    &lt;item</span><br><span class="line">        android:bottom=&quot;1dp&quot;&gt;</span><br><span class="line">        &lt;shape android:shape=&quot;rectangle&quot; &gt;</span><br><span class="line">            &lt;solid android:color=&quot;#E5E5E5&quot; /&gt;</span><br><span class="line">        &lt;/shape&gt;</span><br><span class="line">    &lt;/item&gt;</span><br><span class="line">&lt;/layer-list&gt;</span><br></pre></td></tr></table></figure>
-<p>同理，第二个输入框的效果的思路：底部是一个矩形边框，边框颜色为绿色，宽 1dp，填充白色，然后上面再盖一层白色矩形，然后让白色矩形距离底部 4dp，就实现效果。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;layer-list xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;&gt;</span><br><span class="line">    &lt;item&gt;</span><br><span class="line">        &lt;shape android:shape=&quot;rectangle&quot;&gt;</span><br><span class="line">            &lt;stroke android:color=&quot;#00BE3C&quot; android:width=&quot;1dp&quot;&gt;&lt;/stroke&gt;</span><br><span class="line">            &lt;solid android:color=&quot;#ffffff&quot;&gt;&lt;/solid&gt;</span><br><span class="line">        &lt;/shape&gt;</span><br><span class="line">    &lt;/item&gt;</span><br><span class="line">    &lt;item android:bottom=&quot;4dp&quot;&gt;</span><br><span class="line">        &lt;shape android:shape=&quot;rectangle&quot;&gt;</span><br><span class="line">            &lt;solid android:color=&quot;#ffffff&quot;&gt;&lt;/solid&gt;</span><br><span class="line">        &lt;/shape&gt;</span><br><span class="line">    &lt;/item&gt;</span><br><span class="line">&lt;/layer-list&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>所以其实很简单，我们拿到 UI 效果后，首先要分析根据顺序每一层绘制什么，然后确定每一层的偏移量就好了</p>
-<h3 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h3><blockquote>
-<p><a href="https://developer.android.com/guide/topics/resources/drawable-resource?hl=zh-cn#LayerList" target="_blank" rel="noopener">https://developer.android.com/guide/topics/resources/drawable-resource?hl=zh-cn#LayerList</a></p>
-</blockquote>
-
-          
-        
-      
-    </div>
-    
-    
-    
-<div>
-  
-</div>
-<div>
-      
-</div>
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2518,7 +2454,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
