@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言上一篇文章介绍了用 ItemDecoration 实现物流时间轴样式的一个例子，接下来，再来看一个比较常见的功能：粘性头部分组功能。 我们先来看一下今日头条中选取位置信息时的效果：可以看到这个效果包含下面几个点：  数据分组展示 分组头部悬停 两个分组头部相遇时上面的分组头部被缓缓推出，同时透明度发生变化  下面就来借用 ItemDecoration  来一点点实现它。 在了解 ItemDec">
+<meta name="keywords" content="android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RecycleView 系列（4）--利用 ItemDecoration 实现粘性头部分组功能">
+<meta property="og:url" content="https://xiaxiayang.github.io/2019/03/07/RecycleView 系列（4）--利用 ItemDecoration 实现粘性头部分组功能/index.html">
+<meta property="og:site_name" content="夏霂熠雨">
+<meta property="og:description" content="前言上一篇文章介绍了用 ItemDecoration 实现物流时间轴样式的一个例子，接下来，再来看一个比较常见的功能：粘性头部分组功能。 我们先来看一下今日头条中选取位置信息时的效果：可以看到这个效果包含下面几个点：  数据分组展示 分组头部悬停 两个分组头部相遇时上面的分组头部被缓缓推出，同时透明度发生变化  下面就来借用 ItemDecoration  来一点点实现它。 在了解 ItemDec">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.loli.net/2019/03/07/5c811e5c58db4.gif">
+<meta property="og:image" content="https://i.loli.net/2019/03/07/5c811eae916e3.gif">
+<meta property="og:image" content="https://i.loli.net/2019/03/07/5c811ee7ccf20.gif">
+<meta property="og:image" content="https://i.loli.net/2019/03/07/5c811f11d9634.gif">
+<meta property="og:image" content="https://i.loli.net/2019/03/07/5c811f2994944.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/03/07/5c811f5707d2f.gif">
+<meta property="og:updated_time" content="2019-03-07T13:40:50.836Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RecycleView 系列（4）--利用 ItemDecoration 实现粘性头部分组功能">
+<meta name="twitter:description" content="前言上一篇文章介绍了用 ItemDecoration 实现物流时间轴样式的一个例子，接下来，再来看一个比较常见的功能：粘性头部分组功能。 我们先来看一下今日头条中选取位置信息时的效果：可以看到这个效果包含下面几个点：  数据分组展示 分组头部悬停 两个分组头部相遇时上面的分组头部被缓缓推出，同时透明度发生变化  下面就来借用 ItemDecoration  来一点点实现它。 在了解 ItemDec">
+<meta name="twitter:image" content="https://i.loli.net/2019/03/07/5c811e5c58db4.gif">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://xiaxiayang.github.io/2019/03/07/RecycleView 系列（4）--利用 ItemDecoration 实现粘性头部分组功能/"/>
+
+
+
+
+
+  <title>RecycleView 系列（4）--利用 ItemDecoration 实现粘性头部分组功能 | 夏霂熠雨</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+<a href="https://github.com/xiaxiayang" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; left: 0; transform: scale(-1, 1);" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style></a>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">夏霂熠雨</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://xiaxiayang.github.io/2019/03/07/RecycleView 系列（4）--利用 ItemDecoration 实现粘性头部分组功能/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xiaxiayang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/25956745?s=400&u=3b875396982ce81f05ad70778ceee4e3daf8d909&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏霂熠雨">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RecycleView 系列（4）--利用 ItemDecoration 实现粘性头部分组功能</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-07T21:34:04+08:00">
+                2019-03-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/03/07/RecycleView 系列（4）--利用 ItemDecoration 实现粘性头部分组功能/" class="leancloud_visitors" data-flag-title="RecycleView 系列（4）--利用 ItemDecoration 实现粘性头部分组功能">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+				 <span>℃</span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p><a href="https://blog.csdn.net/qq_33703877/article/details/86634283" target="_blank" rel="noopener">上一篇</a>文章介绍了用 ItemDecoration 实现物流时间轴样式的一个例子，接下来，再来看一个比较常见的功能：粘性头部分组功能。</p>
+<p>我们先来看一下今日头条中选取位置信息时的效果：<br><img src="https://i.loli.net/2019/03/07/5c811e5c58db4.gif" alt="1.gif"><br>可以看到这个效果包含下面几个点：</p>
+<ul>
+<li><strong>数据分组展示</strong></li>
+<li><strong>分组头部悬停</strong></li>
+<li><strong>两个分组头部相遇时上面的分组头部被缓缓推出，同时透明度发生变化</strong></li>
+</ul>
+<p>下面就来借用 ItemDecoration  来一点点实现它。</p>
+<p>在了解 ItemDecoration 之前，这个功能的实现可能会采取在 item 中包含用于展示城市数据的控件和展示头部分组的控件，然后只有每组的第一个数据展示分组控件，其余默认隐藏掉。那现在要用 ItemDecoration  来实现，其实也很简单，每个头部分组就是一种特殊的分割线，组内其他元素采用另一种分割线。</p>
+<p>有了思路，然后让我们先开始造一点用于展示的数据，这里我把一些市区信息存在 json 文档中。为了便于我们在 ItemDecoration 类只进行分割线的绘制，所以我这里对数据提前进行处理，确保在绘制分割线之前，已经知道哪些数据是分组的头部，哪些数据是组内其他元素。</p>
+<p><strong>分组逻辑</strong>为：第一个数据肯定是分组的头部，然后从第二个数据开始，拿当前数据和上个数据进行比较，如果首字母相等，说明当前数据仍然是这个分组内的数据，如果不一样，说明产生了新的分组，那么当前这个数据就是这个分组的头部。</p>
+<p>下面是部分进行数据处理的代码（默认数据已经按首字母分组）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">List&lt;CityBean&gt; cityBeans = JSONArray.parseArray(cityJson, CityBean.class);</span><br><span class="line">           if (cityBeans ==null &amp;&amp; cityBeans.size() ==0)&#123;</span><br><span class="line">               return;</span><br><span class="line">           &#125;</span><br><span class="line">           for (int i = 0; i &lt; cityBeans.size() ; i++) &#123;</span><br><span class="line">               CityBean cityBean = cityBeans.get(i);</span><br><span class="line">               //获取当前数据的首字母</span><br><span class="line">               String firstLetter = cityBean.getPinyin() ==null? &quot;#&quot; :cityBean.getPinyin().substring(0,1);</span><br><span class="line">               cityBean.setFirstLetter(firstLetter);</span><br><span class="line">               //第一个数据肯定是分组头部</span><br><span class="line">               if (i ==0)&#123;</span><br><span class="line">                   cityBean.setGroupFirst(true);</span><br><span class="line">               &#125;else &#123;</span><br><span class="line">                   //其余数据要跟上个数据进行比较</span><br><span class="line">                   CityBean lastCityBean = cityBeans.get(i-1);</span><br><span class="line">                   String lastLetter = lastCityBean.getPinyin() ==null? &quot;#&quot; :lastCityBean.getPinyin().substring(0,1);</span><br><span class="line">                //当前数据首字母和上个数据首字母相等，说明还是组内数据，不相等，出现新的分组，当前数据是分组头部</span><br><span class="line">                   cityBean.setGroupFirst(!firstLetter.equals(lastLetter));</span><br><span class="line">               &#125;</span><br><span class="line">               cityBeanList.add(cityBean);</span><br><span class="line">           &#125;</span><br></pre></td></tr></table></figure>
+<p>接下来我们来绘制分割线。首先需要设置 <code>getItemOffsets（）</code>方法，为 item 预留出分割线的位置（分组头部分割线高 20dp，其余组内元素分割线 1px）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">    * 设置 item  top方向的偏移量</span><br><span class="line">    */</span><br><span class="line">    private int topOffset ;</span><br><span class="line">    </span><br><span class="line">    public GroupDivider(Context context, List&lt;CityBean&gt; cityBeanList) &#123;</span><br><span class="line">       this.context = context;</span><br><span class="line">       this.cityBeanList = cityBeanList;</span><br><span class="line">       paint=  new Paint();</span><br><span class="line">       paint.setAntiAlias(true);</span><br><span class="line">       paint.setColor(context.getResources().getColor(R.color.black));</span><br><span class="line">       paint.setTextSize(18);</span><br><span class="line">       paint.setTextAlign(Paint.Align.CENTER);</span><br><span class="line">       fontMetrics = paint.getFontMetrics();</span><br><span class="line">       topOffset =  ScreenUtil.dip2px(context,20);</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">    @Override</span><br><span class="line">   public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) &#123;</span><br><span class="line">       super.getItemOffsets(outRect, view, parent, state);</span><br><span class="line"></span><br><span class="line">       final  int position = parent.getChildAdapterPosition(view);</span><br><span class="line">       final CityBean cityBean = cityBeanList.get(position);</span><br><span class="line"></span><br><span class="line">       if ( cityBean .isGroupFirst())&#123;</span><br><span class="line">           //头部分组元素</span><br><span class="line">           outRect.top = topOffset;</span><br><span class="line">       &#125;else &#123;</span><br><span class="line">           //组内元素</span><br><span class="line">           outRect.top = 0;</span><br><span class="line">       &#125;</span><br><span class="line">       //每个组内元素的分割线高度</span><br><span class="line">       outRect.bottom = 1;</span><br><span class="line"></span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>然后在 <code>onDraw（</code>） 或 <code>onDrawOver（）</code> 方法中进行分割线的绘制。我们知道，这两个方法的区别是 <code>onDraw（）</code> 的绘制顺序早于 item 的绘制，所以会被 item 覆盖，而我们接下来是要实现悬停的功能，也就是头部分组的分割线要始终在 最上层，不能被 item 覆盖。所以，我们这里采取在  <code>onDrawOver（）</code> 方法中进行分割线的绘制。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">  public void onDrawOver(@NonNull Canvas canvas, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) &#123;</span><br><span class="line">      canvas.save();</span><br><span class="line">      //获取文字基准等信息</span><br><span class="line">      float topTxt = fontMetrics.top;</span><br><span class="line">      float bottomTxt = fontMetrics.bottom;</span><br><span class="line">      int baseLineY = (int) (topTxt/2 + bottomTxt/2);</span><br><span class="line">      final int childCount = parent.getChildCount();</span><br><span class="line">      //遍历 ReycleView 当前可见 item</span><br><span class="line">      for (int i = 0; i &lt; childCount; i++) &#123;</span><br><span class="line">          final View child = parent.getChildAt(i);</span><br><span class="line">          final  int position = parent.getChildAdapterPosition(child);</span><br><span class="line">          CityBean cityBean = cityBeanList.get(position);</span><br><span class="line">          //获取分组字母</span><br><span class="line">          final  String text = cityBean.getPinyin().substring(0,1).toUpperCase();</span><br><span class="line">           //如果是分组的第一条数据，绘制分组头部</span><br><span class="line">          if (cityBean.isGroupFirst())&#123;</span><br><span class="line">               paint.setColor(context.getResources().getColor(R.color.gray));</span><br><span class="line">               canvas.drawRect(0,child.getTop()-topOffset,parent.getRight(),child.getTop(),paint);</span><br><span class="line">               paint.setColor(context.getResources().getColor(R.color.black));</span><br><span class="line">               canvas.drawText(text,30,child.getTop()-topOffset/2-baseLineY,paint);</span><br><span class="line">              &#125;</span><br><span class="line">          &#125;</span><br><span class="line">      </span><br><span class="line">      canvas.restore();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>运行，看下效果：<br><img src="https://i.loli.net/2019/03/07/5c811eae916e3.gif" alt="12.gif"><br>可以看到，分组功能已经实现。下面接着看第二要点：头部悬停</p>
+<h3 id="2-设置头部悬停"><a href="#2-设置头部悬停" class="headerlink" title="2.设置头部悬停"></a>2.设置头部悬停</h3><p>实现头部悬停的原理也很简单：<strong>不管当前元素是不是分组内的第一个元素，只要是当前 RecycleView 可见的第一个 item ，就需要绘制分组头部。</strong></p>
+<p>因为我们在  <code>onDrawOver()</code> 方法中根据 <code>parent.getChildCount()</code> 获取到的就是可见的 item ，所以下面稍微改动下  <code>onDrawOver()</code> 方法，添加第一条可见 item 逻辑判断：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">  public void onDrawOver(@NonNull Canvas canvas, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) &#123;</span><br><span class="line">      canvas.save();</span><br><span class="line">      //获取文字基准等信息</span><br><span class="line">      float topTxt = fontMetrics.top;</span><br><span class="line">      float bottomTxt = fontMetrics.bottom;</span><br><span class="line">      int baseLineY = (int) (topTxt/2 + bottomTxt/2);</span><br><span class="line">      final int childCount = parent.getChildCount();</span><br><span class="line">      //遍历 ReycleView 当前可见 item</span><br><span class="line">      for (int i = 0; i &lt; childCount; i++) &#123;</span><br><span class="line">          final View child = parent.getChildAt(i);</span><br><span class="line">          final  int position = parent.getChildAdapterPosition(child);</span><br><span class="line">          CityBean cityBean = cityBeanList.get(position);</span><br><span class="line">          //获取分组字母</span><br><span class="line">          final  String text = cityBean.getPinyin().substring(0,1).toUpperCase();</span><br><span class="line">          //可见的第一条数据不管是不是分组的第一个，都要绘制分组 header</span><br><span class="line">          if (i == 0)&#123;</span><br><span class="line">              paint.setColor(context.getResources().getColor(R.color.gray));</span><br><span class="line">              //获取 recycleview 的 paddingTop 的值，防止悬停头部分组位置计算不对</span><br><span class="line">              int top = parent.getPaddingTop();</span><br><span class="line">              //绘制40px的矩形框</span><br><span class="line">              canvas.drawRect(0,top,parent.getRight(),topOffset,paint);</span><br><span class="line">              paint.setColor(context.getResources().getColor(R.color.black));</span><br><span class="line">              //绘制分组字母文字</span><br><span class="line">              canvas.drawText(text,30,top+topOffset/2-baseLineY,paint);</span><br><span class="line">          &#125;else &#123;</span><br><span class="line">              //可见的非第一条数据，如果是分组的第一条数据，绘制分组头部</span><br><span class="line">              if (cityBean.isGroupFirst())&#123;</span><br><span class="line">                  paint.setColor(context.getResources().getColor(R.color.gray));</span><br><span class="line">                  canvas.drawRect(0,child.getTop()-topOffset,parent.getRight(),child.getTop(),paint);</span><br><span class="line">                  paint.setColor(context.getResources().getColor(R.color.black));</span><br><span class="line">                  canvas.drawText(text,30,child.getTop()-topOffset/2-baseLineY,paint);</span><br><span class="line">              &#125;</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      canvas.restore();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<p>然后运行，看下效果：<br><img src="https://i.loli.net/2019/03/07/5c811ee7ccf20.gif" alt="3.gif"><br>可以看到，头部悬停功能已经很好的实现了。但是跟头条比，在两个头部相遇切换的时候比较生硬，可以仔细看一下动图的最后面一部分，下一个分组头部是直接覆盖掉上一个分组头部的。</p>
+<p>所以，接下来，一起来看下第三部分推动效果的实现。</p>
+<h3 id="3-设置推出动画效果"><a href="#3-设置推出动画效果" class="headerlink" title="3.设置推出动画效果"></a>3.设置推出动画效果</h3><p>首先，再来仔细的看一下这个推出的过程：<br><img src="https://i.loli.net/2019/03/07/5c811f11d9634.gif" alt="4.gif"><br>然后这里截取一下整个过程中的几个片段：<br><img src="https://i.loli.net/2019/03/07/5c811f2994944.jpg" alt="5.jpg"><br>仔细分析一下这个图，然后思考下下面几个问题:</p>
+<p><strong>Q：什么时候两个头部分组快要相遇了？</strong></p>
+<p>A：由图一到图二，分析可知，是 A3 这个 item 慢慢的靠近区分 A，A2 这个 item  慢慢滑出屏幕，A3 成为 RecycleView 的第一个可见的 item 的时候。<br>而 A3 有没有什么特殊的地方？有的，A3 是 A 这个分组<strong>组内的最后一个元素</strong>。</p>
+<p><strong>Q：两个分组头部相遇的临界点满足什么条件？</strong></p>
+<p>A：由图三分析，临界条件为 A3 成为 RecycleView 第一个可见元素，并且 A3 这个 item 的 bottom 坐标值是分区 A 的 bottom的坐标值， <strong>A3 的 bottom 坐标值 - A 的高度  = RecycleView 的 可见上边界值</strong>（RecycleView 起点，去掉 RecycleView 的 paddingTop）</p>
+<p><strong>Q：两个分组头部相遇后，A 分区的坐标值怎么变化?</strong></p>
+<p>因为我们是需要在<code>onDrawOver()</code> 方法中绘制 A 区域，所以需要计算 A 的 top 坐标值 和 bottom 坐标值，由图四可以得出，<strong>A 的 top 值 = A3的 bottom - A 的高度</strong>，并且这个值肯定是小于 0（或者 RecycleView 的 paddingTop 值）</p>
+<p>来看一下具体代码实现：</p>
+<p>首先我们<strong>需要判断一条数据是不是组内的最后一条数据</strong>，所以改造下最开始的数据处理部分的代码，加上设置是否是组内最后一条数据的标志：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">for (int i = 0; i &lt; cityBeans.size() ; i++) &#123;</span><br><span class="line">                CityBean cityBean = cityBeans.get(i);</span><br><span class="line">                //获取当前数据的首字母</span><br><span class="line">                String firstLetter = cityBean.getPinyin() ==null? &quot;#&quot; :cityBean.getPinyin().substring(0,1);</span><br><span class="line">                cityBean.setFirstLetter(firstLetter);</span><br><span class="line">                //第一个数据肯定是分组头部</span><br><span class="line">                if (i ==0)&#123;</span><br><span class="line">                    cityBean.setGroupFirst(true);</span><br><span class="line">                &#125;else &#123;</span><br><span class="line">                    //其余数据要跟上个数据进行比较</span><br><span class="line">                    CityBean lastCityBean = cityBeans.get(i-1);</span><br><span class="line">                    String lastLetter = lastCityBean.getPinyin() ==null? &quot;#&quot; :lastCityBean.getPinyin().substring(0,1);</span><br><span class="line">                 //当前数据首字母和上个数据首字母相等，说明还是组内数据，不相等，出现新的分组，当前数据是分组头部</span><br><span class="line">                    cityBean.setGroupFirst( ! firstLetter.equals(lastLetter));</span><br><span class="line">                    //当前数据首字母和上个数据首字母相等，说明上一条数据不是组内最后条数据，不相等，出现新的分组，上条数据就是其组内最后一条元素</span><br><span class="line">                     lastCityBean.setGroupLast( ! firstLetter.equals(lastLetter));</span><br><span class="line">                &#125;</span><br><span class="line">                cityBeanList.add(cityBean);</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
+<p>然后修改一下 <code>onDrawOver()</code> 方法中 第一条可见数据时的逻辑：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">  public void onDrawOver(@NonNull Canvas canvas, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) &#123;</span><br><span class="line">      canvas.save();</span><br><span class="line">      //获取文字基准等信息</span><br><span class="line">      float topTxt = fontMetrics.top;</span><br><span class="line">      float bottomTxt = fontMetrics.bottom;</span><br><span class="line">      int baseLineY = (int) (topTxt/2 + bottomTxt/2);</span><br><span class="line">      final int childCount = parent.getChildCount();</span><br><span class="line">      //遍历 ReycleView 当前可见 item</span><br><span class="line">      for (int i = 0; i &lt; childCount; i++) &#123;</span><br><span class="line">          final View child = parent.getChildAt(i);</span><br><span class="line">          final  int position = parent.getChildAdapterPosition(child);</span><br><span class="line">          CityBean cityBean = cityBeanList.get(position);</span><br><span class="line">          //获取分组字母</span><br><span class="line">          final  String text = cityBean.getPinyin().substring(0,1).toUpperCase();</span><br><span class="line">          //可见的第一条数据不管是不是分组的第一个，都要绘制分组 header</span><br><span class="line">          if (i == 0)&#123;</span><br><span class="line">              paint.setColor(context.getResources().getColor(R.color.gray));</span><br><span class="line">              //获取 recycleview 的 paddingTop 的值，防止悬停头部分组位置计算不对</span><br><span class="line">              int top = parent.getPaddingTop();</span><br><span class="line">               //是分组内最后一个元素</span><br><span class="line">              if (cityBean.isGroupLast())&#123;</span><br><span class="line">              //计算头部推出后的top的坐标值</span><br><span class="line">                  int diffTop = child.getBottom() - topOffset;</span><br><span class="line">                  //需要推出去了</span><br><span class="line">                  if (diffTop &lt;  top)&#123;</span><br><span class="line">                      top = diffTop;</span><br><span class="line">                      //设置推出去后的分组头部颜色浅一点</span><br><span class="line">                      paint.setColor(context.getResources().getColor(R.color.gray_light));</span><br><span class="line">                  &#125;</span><br><span class="line">              &#125;</span><br><span class="line">              //绘制40px的矩形框</span><br><span class="line">              canvas.drawRect(0,top,parent.getRight(),topOffset,paint);</span><br><span class="line">              paint.setColor(context.getResources().getColor(R.color.black));</span><br><span class="line">              //绘制分组字母文字</span><br><span class="line">              canvas.drawText(text,30,top+topOffset/2-baseLineY,paint);</span><br><span class="line">          &#125;else &#123;</span><br><span class="line">              //可见的非第一条数据，如果是分组的第一条数据，绘制分组头部</span><br><span class="line">              if (cityBean.isGroupFirst())&#123;</span><br><span class="line">                  paint.setColor(context.getResources().getColor(R.color.gray));</span><br><span class="line">                  canvas.drawRect(0,child.getTop()-topOffset,parent.getRight(),child.getTop(),paint);</span><br><span class="line">                  paint.setColor(context.getResources().getColor(R.color.black));</span><br><span class="line">                  canvas.drawText(text,30,child.getTop()-topOffset/2-baseLineY,paint);</span><br><span class="line">              &#125;</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      canvas.restore();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<p>至此，整个逻辑完成，运行，看一下效果：<br><img src="https://i.loli.net/2019/03/07/5c811f5707d2f.gif" alt="6.gif"></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>关于 ItemDecoration 类的使用就到这里了，结合这几篇文章，我们可以发现，只要是用到 ItemDecoration 类实现的，步骤都很固定，第一步利用  <code>getItemOffsets（）</code>方法，为 item 预留出分割线的位置，第二部在 <code>onDraw（）</code>或 <code>onDrawOver（）</code> 方法中进行绘制。</p>
+<p>其实比较难的就是分析实现的过程，和各个点坐标的计算。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://blog.csdn.net/briblue/article/details/70211942" target="_blank" rel="noopener">https://blog.csdn.net/briblue/article/details/70211942</a><br><a href="https://juejin.im/post/5a4551ce51882512d82305cb" target="_blank" rel="noopener">https://juejin.im/post/5a4551ce51882512d82305cb</a><br><a href="https://developer.android.com/reference/android/support/v7/widget/RecyclerView.ItemDecoration" target="_blank" rel="noopener">https://developer.android.com/reference/android/support/v7/widget/RecyclerView.ItemDecoration</a></p>
+
+      
+    </div>
+    
+    
+    
+<div>
+  
+    ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">------------- 本文结束 <i class="fa fa-paw"></i> 感谢您的阅读 -------------</div>
+    
+</div>
+
+  
+</div>
+<div>
+      
+        
+      
+</div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/20/RecycleView 系列（3）-- 利用 ItemDecoration 实现时光轴（物流时间）样式/" rel="next" title="RecycleView 系列（3）-- 利用 ItemDecoration 实现时光轴（物流时间）样式类">
+                <i class="fa fa-chevron-left"></i> RecycleView 系列（3）-- 利用 ItemDecoration 实现时光轴（物流时间）样式类
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zOTcwMS8xNjIyOA=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://avatars0.githubusercontent.com/u/25956745?s=400&u=3b875396982ce81f05ad70778ceee4e3daf8d909&v=4"
+                alt="xiaxiayang" />
+            
+              <p class="site-author-name" itemprop="name">xiaxiayang</p>
+              <p class="site-description motion-element" itemprop="description">万事起于乎微</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-设置头部悬停"><span class="nav-number">2.</span> <span class="nav-text">2.设置头部悬停</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-设置推出动画效果"><span class="nav-number">3.</span> <span class="nav-text">3.设置推出动画效果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xiaxiayang</span>
+
+  
+</div>
+
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+-->
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("ByyCi7vrXdGjsa6CpXHlJEvk-gzGzoHsz", "g9aOj0XwnjgbqfEbmmyuBw2O");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
